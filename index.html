@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sahit Pothala · Designer and Video Editor</title>
+<meta name="description" content="Sahit Pothala, AI visual designer and video editor. Ad campaigns, reels, talking-head edits and thumbnails.">
+<meta property="og:title" content="Sahit Pothala · Visual designer and video editor">
+<meta property="og:description" content="A portfolio you use like a Mac. Ad campaigns, creatives and edits.">
+<meta property="og:image" content="img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000'/%3E%3Ctext x='8' y='41' font-family='Helvetica,Arial' font-weight='700' font-size='22' fill='%23fff'%3Esa%3C/text%3E%3Ccircle cx='35' cy='38' r='3' fill='%23E5372B'/%3E%3Ctext x='38' y='41' font-family='Helvetica,Arial' font-weight='700' font-size='22' fill='%23fff'%3Eh%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Plan: macOS desktop as a portfolio. Wallpaper = Sahit's cutout over a giant faint wordmark.
+   Desktop folders open Finder; Dock opens Photos (gallery), Notes (about + CV), Mail, Instagram.
+   Under 760px it becomes an iPhone home screen and every window opens full screen. */
+:root{
+  --ds:56px;
+  --sf: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --ink:#1D1D1F; --sub:#6E6E73; --line:rgba(0,0,0,.09);
+  --wall:#E6E6E9; --wall-hi:#FAFAFB; --mark:rgba(0,0,0,.045);
+  --glass:rgba(250,250,252,.72); --glass-strong:rgba(255,255,255,.88);
+  --win:#FFFFFF; --side:#F2F2F5; --hover:rgba(0,0,0,.05);
+  --blue:#0066CC; --red:#E5372B; --notes:#E0A800;
+  --shadow:0 22px 60px rgba(0,0,0,.18),0 2px 10px rgba(0,0,0,.08);
+  color-scheme:light;
+}
+:root[data-mode="dark"]{
+  --ink:#F5F5F7; --sub:#A1A1A6; --line:rgba(255,255,255,.1);
+  --wall:#151517; --wall-hi:#2A2A2E; --mark:rgba(255,255,255,.05);
+  --glass:rgba(40,40,44,.66); --glass-strong:rgba(44,44,48,.9);
+  --win:#1E1E20; --side:#262629; --hover:rgba(255,255,255,.07);
+  --blue:#4DA3FF;
+  --shadow:0 22px 60px rgba(0,0,0,.55),0 2px 10px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:var(--sf);color:var(--ink);background:var(--wall);overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:default}
+a{color:var(--blue)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+img{max-width:100%}
+
+/* ---------- wallpaper ---------- */
+.wall{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 35%,var(--wall-hi) 0%,var(--wall) 65%);overflow:hidden}
+.wall .mark{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-weight:700;font-size:min(30vw,460px);letter-spacing:-.06em;color:var(--mark);white-space:nowrap;user-select:none;display:flex;align-items:center}
+.wall .mark i{display:inline-block;width:.16em;height:.16em;border-radius:50%;background:var(--red);opacity:.55;margin:0 .03em;align-self:flex-end;margin-bottom:.2em}
+.wall .me{position:absolute;left:50%;bottom:-38vh;height:132vh;transform:translateX(-50%);filter:drop-shadow(0 30px 40px rgba(0,0,0,.12));user-select:none;pointer-events:none}
+
+/* frosted glass wallpaper, clears around the cursor */
+@property --fr{syntax:'<length>';inherits:true;initial-value:0px}
+.wall{--mx:50%;--my:40%;--fr:0px;transition:--fr .45s cubic-bezier(.2,.8,.2,1)}
+.wall.peek{--fr:230px}
+.wall .frost{position:absolute;inset:0;pointer-events:none;background:rgba(240,240,243,.12);backdrop-filter:blur(8px) saturate(1.1);-webkit-backdrop-filter:blur(8px) saturate(1.1);
+  -webkit-mask-image:radial-gradient(circle var(--fr) at var(--mx) var(--my),transparent 0,transparent 55%,#000 100%);mask-image:radial-gradient(circle var(--fr) at var(--mx) var(--my),transparent 0,transparent 55%,#000 100%)}
+:root[data-mode="dark"] .wall .frost{background:rgba(20,20,22,.25)}
+
+/* ---------- menu bar ---------- */
+.menubar{position:fixed;top:0;left:0;right:0;height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:var(--glass);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);font-size:13.5px;z-index:9000;border-bottom:1px solid var(--line)}
+.menubar .l,.menubar .r{display:flex;align-items:center;gap:4px}
+.menubar .l > *,.menubar .r > *{padding:3px 9px;border-radius:5px}
+.menubar button:hover,.menubar a:hover{background:var(--hover)}
+.menubar a{color:inherit;text-decoration:none}
+.logo{display:flex;align-items:center;font-weight:700;letter-spacing:-.02em;font-size:14px}
+.logo i{width:5px;height:5px;border-radius:50%;background:var(--red);margin:0 1.5px;align-self:flex-end;margin-bottom:4px}
+.menubar .app{font-weight:600}
+.menubar .dim{color:var(--ink)}
+.avail{display:flex;align-items:center;gap:7px}
+.avail b{width:7px;height:7px;border-radius:50%;background:#28C840;box-shadow:0 0 0 3px rgba(40,200,64,.18)}
+.clock{font-variant-numeric:tabular-nums}
+
+/* ---------- widget ---------- */
+.widget{position:fixed;left:24px;top:54px;width:290px;touch-action:none;cursor:default;padding:16px;border-radius:22px;background:var(--glass);backdrop-filter:blur(28px) saturate(1.5);-webkit-backdrop-filter:blur(28px) saturate(1.5);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.08);display:flex;flex-direction:column;gap:12px;z-index:5}
+.widget .top{display:flex;gap:12px;align-items:center}
+.avatar{width:52px;height:52px;border-radius:50%;background:#DCDCE0 url(img/avatar.webp) center/cover no-repeat;flex-shrink:0}
+.widget h2{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.widget p{margin:2px 0 0;font-size:13px;color:var(--sub)}
+.widget .rows{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
+.widget .rows span:nth-child(odd){color:var(--sub)}
+.widget .rows span{font-variant-numeric:tabular-nums}
+.widget .act{display:flex;gap:8px}
+.btn{flex:1;text-align:center;font-size:13px;font-weight:500;padding:8px 10px;border-radius:9px;background:var(--hover);color:var(--ink);text-decoration:none;cursor:pointer}
+.btn:hover{background:rgba(0,0,0,.09)}
+.btn.primary{background:var(--blue);color:#fff}
+:root[data-mode="dark"] .btn:hover{background:rgba(255,255,255,.12)}
+
+/* ---------- world clock widget ---------- */
+.widget.clocks{top:292px;gap:10px;width:330px}
+.clocks .head{font-size:12px;font-weight:600;color:var(--sub);display:flex;justify-content:space-between}
+.clocks .pitch{margin:0;font-size:12.5px;line-height:1.4;color:var(--ink)}
+.clocks .row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.wc{display:flex;flex-direction:column;gap:2px;padding:10px 10px 9px;border-radius:14px;background:rgba(255,255,255,.7);border:1px solid var(--line);min-width:0}
+:root[data-mode="dark"] .wc{background:rgba(255,255,255,.06)}
+.wc.night{background:#1D1D1F;color:#F5F5F7;border-color:transparent}
+.wc b{font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc .t{display:flex;align-items:baseline;gap:2px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.wc .hm{font-size:22px;font-weight:600;line-height:1.1}
+.wc .ss{font-size:11px;font-weight:600;color:#FF9500;width:14px}
+.wc .ap{font-weight:600}
+.wc small{font-size:10.5px;opacity:.65;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.3}
+.feat{display:none}
+.wavail{display:none}
+.widget.dragging,.dicon.dragging{cursor:grabbing;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+
+/* ---------- desktop icons ---------- */
+.desk{position:fixed;inset:30px 0 0 0;pointer-events:none;z-index:5}
+.desk .dicon{position:absolute;pointer-events:auto;touch-action:none}
+.dicon{direction:ltr}
+.dicon{width:120px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 4px;border-radius:10px;cursor:default}
+.stack{position:relative;width:84px;height:100px;pointer-events:none}
+.dicon,.widget{user-select:none;-webkit-user-select:none}
+.dicon img,.dicon svg{-webkit-user-drag:none;pointer-events:none}
+.stack img{position:absolute;left:50%;top:50%;width:72px;height:90px;object-fit:cover;border-radius:4px;border:3px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,.18);transform:translate(-50%,-50%) rotate(var(--r))}
+.dicon:hover .stack img:nth-child(1){transform:translate(-62%,-52%) rotate(-10deg)}
+.dicon:hover .stack img:nth-child(2){transform:translate(-38%,-50%) rotate(8deg)}
+.stack img{transition:transform .2s ease}
+.dicon > span:not(.stack):not(.ic),.dicon small{background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:5px}
+.dicon small{font-size:11px;color:var(--sub);margin-top:-5px;padding:0 6px}
+.dicon .ic{width:62px;height:62px;display:flex;align-items:center;justify-content:center}
+.dicon span{font-size:12.5px;font-weight:500;text-align:center;line-height:1.25;padding:1px 6px;border-radius:4px;text-shadow:0 1px 2px rgba(255,255,255,.6)}
+:root[data-mode="dark"] .dicon span{text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.dicon.sel .ic,.dicon.sel .stack{background:rgba(0,0,0,.12);border-radius:8px;box-shadow:0 0 0 4px rgba(0,0,0,.12)}
+.dicon.sel span{background:var(--blue);color:#fff;text-shadow:none}
+
+/* ---------- dock ---------- */
+.dock{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:max-content;display:flex;align-items:flex-end;gap:6px;height:calc(var(--ds) + 20px);overflow:visible;padding:7px 9px 5px;border-radius:24px;background:var(--glass);backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border:1px solid var(--line);box-shadow:0 10px 40px rgba(0,0,0,.14);z-index:8000}
+.dock .item{position:relative;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:inherit}
+.dock .item img,.dock .item .sv{width:var(--ds);height:var(--ds);display:block;transition:width .22s cubic-bezier(.2,.8,.2,1),height .22s cubic-bezier(.2,.8,.2,1)}
+.dock.mag .item img{transition:width .06s linear,height .06s linear}
+.dock .item.bounce img{animation:bounce .5s ease-out 2}
+@keyframes bounce{0%,100%{transform:none}40%{transform:translateY(-22px)}70%{transform:translateY(-4px)}}
+.dock .dot{width:4px;height:4px;border-radius:50%;background:transparent}
+.dock .item.on .dot{background:var(--ink)}
+.dock .tip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:13px;padding:4px 10px;border-radius:7px;background:var(--glass-strong);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.12);opacity:0;pointer-events:none;transition:opacity .12s}
+.dock .item:hover .tip,.dock .item:focus-visible .tip{opacity:1}
+.dock .item.mini img{object-fit:cover;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.dock .sep{width:13px;align-self:stretch;margin:4px -2px 8px;display:flex;justify-content:center;cursor:ns-resize;touch-action:none}
+.dock .sep::before{content:"";width:1px;height:100%;background:rgba(0,0,0,.18)}
+:root[data-mode="dark"] .dock .sep::before{background:rgba(255,255,255,.2)}
+.dock.resizing .item img{transition:none}
+
+/* ---------- windows ---------- */
+#windows{position:fixed;inset:30px 0 0 0;pointer-events:none;z-index:100}
+.win{position:absolute;pointer-events:auto;background:var(--win);border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;min-width:320px;min-height:220px;resize:both}
+.win.opening{animation:pop .18s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.win.max{left:8px!important;top:8px!important;width:calc(100% - 16px)!important;height:calc(100% - 100px)!important;resize:none}
+.win.min{display:none}
+.bar{height:44px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--win);user-select:none;touch-action:none}
+.lights{display:flex;gap:8px}
+.lights button{width:12px;height:12px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(0,0,0,.55);font-size:9px;line-height:1}
+.lights .c{background:#FF5F57}.lights .m{background:#FEBC2E}.lights .z{background:#28C840}
+.lights button svg{opacity:0}
+.lights:hover button svg{opacity:1}
+.bar .title{flex:1;text-align:center;font-size:13.5px;font-weight:600;margin-right:52px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .back{display:none}
+.body{flex:1;min-height:0;display:flex}
+.side{width:190px;flex-shrink:0;background:var(--side);border-right:1px solid var(--line);padding:12px 10px;overflow:auto;display:flex;flex-direction:column;gap:2px}
+.side h4{margin:10px 8px 4px;font-size:11px;font-weight:600;color:var(--sub)}
+.side button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:6px 8px;border-radius:7px;font-size:13.5px;cursor:pointer}
+.side button:hover{background:var(--hover)}
+.side button.act{background:rgba(0,0,0,.1);font-weight:500}
+:root[data-mode="dark"] .side button.act{background:rgba(255,255,255,.14)}
+.side svg{flex-shrink:0;color:var(--blue)}
+.main{flex:1;min-width:0;overflow:auto;padding:20px}
+.main h3{margin:0 0 14px;font-size:20px;font-weight:700;letter-spacing:-.02em}
+
+/* finder / photos grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.tile{display:flex;flex-direction:column;gap:6px;cursor:pointer;text-align:left}
+.tile .th{aspect-ratio:4/5;border-radius:8px;background:var(--side) center/cover no-repeat;border:1px solid var(--line)}
+.tile span{font-size:12.5px;font-weight:500}
+.tile small{font-size:11.5px;color:var(--sub)}
+.empty{height:100%;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:var(--sub);font-size:14px}
+.empty b{color:var(--ink);font-size:17px;font-weight:600}
+.empty img{width:72px;opacity:.9}
+
+/* notes */
+.notes .side{width:230px;background:var(--side)}
+.note-item{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:2px!important;padding:9px 10px!important}
+.note-item strong{font-size:13.5px;font-weight:600}
+.note-item small{font-size:12px;color:var(--sub)}
+.notes .side button.act{background:rgba(224,168,0,.22)}
+.note{max-width:640px;font-size:15px;line-height:1.6}
+.note .date{font-size:12px;color:var(--sub);text-align:center;margin-bottom:14px}
+.note h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 0 10px;line-height:1.2}
+.note h2{font-size:17px;font-weight:700;margin:22px 0 6px}
+.note p{margin:0 0 10px}
+.note ul{margin:0 0 10px;padding-left:20px}
+.note li{margin-bottom:4px}
+.note .meta{color:var(--sub);font-size:13.5px}
+.note .check{list-style:none;padding:0}
+.note .check li{display:flex;gap:10px;align-items:flex-start}
+.note .check li::before{content:"";width:17px;height:17px;flex-shrink:0;margin-top:3px;border-radius:50%;background:#F2B705 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 6.2l2 2 4-4.4' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/11px no-repeat}
+.note-item .nt{display:flex;justify-content:space-between;width:100%;gap:8px}
+.note-item em{font-style:normal;font-size:12.5px;color:var(--sub)}
+.note .check li{margin-bottom:8px}
+
+/* information window (Get Info) */
+.win.info{background:#ECECEE}
+:root[data-mode="dark"] .win.info{background:#232326}
+.win.info .bar{background:transparent;justify-content:flex-start}
+.win.info .bar .title,.win.dlg .bar .title{text-align:left;margin-right:0;font-weight:500}
+.ibody{flex:1;overflow:auto;padding:16px 18px 22px;display:flex;flex-direction:column;gap:14px}
+.ihead{display:flex;gap:16px;align-items:center}
+.ihead strong{display:block;font-size:17px;font-weight:600}
+.ihead span{font-size:14px}
+.istack{position:relative;width:74px;height:84px;flex-shrink:0}
+.istack img{position:absolute;inset:4px 8px;width:58px;height:74px;object-fit:cover;border-radius:4px;border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.15);transform:rotate(var(--r))}
+.idesc{margin:0;background:var(--win);padding:10px 12px;font-size:14.5px;line-height:1.55;color:var(--sub);border-radius:2px}
+.ibody details summary{font-size:14.5px;font-weight:500;cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px}
+.ibody details summary::-webkit-details-marker{display:none}
+.ibody details summary::before{content:"";width:7px;height:7px;border-right:1.5px solid var(--sub);border-bottom:1.5px solid var(--sub);transform:rotate(-45deg);transition:transform .15s}
+.ibody details[open] summary::before{transform:rotate(45deg)}
+.irows{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px;padding:10px 0 0 14px}
+.irows span:nth-child(odd){color:var(--sub)}
+.iprev{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding-top:12px}
+.iprev .tile img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:8px;display:block}
+/* joke dialogs */
+.win.dlg{background:#2C2C2E;color:#F5F5F7;border:1px solid rgba(255,255,255,.12);min-height:0;resize:none;box-shadow:0 30px 70px rgba(0,0,0,.45)}
+.win.dlg .bar{background:transparent;border-bottom:1px solid rgba(255,255,255,.1);height:36px;justify-content:center}
+.win.dlg .bar{justify-content:space-between}
+.win.dlg .bar .title{flex:1;margin-right:52px}
+.win.dlg .bar .title{text-align:center;color:#A1A1A6;font-size:13px}
+.dbody{display:flex;gap:18px;padding:20px 22px 6px;align-items:flex-start}
+.dbody img{width:56px;height:56px;flex-shrink:0}
+.dbody p{margin:4px 0 0;font-size:14px;line-height:1.5}
+.dfoot{display:flex;justify-content:flex-end;padding:12px 18px 16px;margin-top:auto}
+.dbtn{background:#0A84FF;color:#fff;font-size:13.5px;font-weight:500;padding:6px 14px;border-radius:6px;cursor:pointer}
+.dbtn:hover{background:#2A94FF}
+.dbtn{text-decoration:none;display:inline-block}
+.dbtn.ghost{background:rgba(255,255,255,.12)}
+.dbtn.ghost:hover{background:rgba(255,255,255,.2)}
+.mopts{gap:8px;flex-wrap:wrap}
+.maddr{font-size:15px!important;font-weight:600;user-select:all;-webkit-user-select:all;margin:2px 0 6px!important}
+
+/* boot screen */
+.boot{position:fixed;inset:0;z-index:99999;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:44px}
+.boot.show{display:flex}
+.boot.out{opacity:0;transition:opacity .35s ease}
+.bmark{display:flex;align-items:center;color:#fff;font-weight:700;font-size:56px;letter-spacing:-.04em}
+.bmark i{width:12px;height:12px;border-radius:50%;background:var(--red);margin:0 4px;align-self:flex-end;margin-bottom:10px}
+.bbar{width:180px;height:5px;border-radius:3px;background:#333;overflow:hidden}
+.bbar b{display:block;height:100%;width:0;background:#fff;border-radius:3px;animation:bootfill 1s ease-in-out forwards}
+@keyframes bootfill{to{width:100%}}
+/* spotlight */
+.spot{position:fixed;inset:0;z-index:9700;display:none;align-items:flex-start;justify-content:center;padding-top:18vh;background:rgba(0,0,0,.08)}
+.spot.show{display:flex}
+.spot-box{width:min(640px,calc(100% - 32px));border-radius:16px;background:var(--glass-strong);backdrop-filter:blur(40px) saturate(1.6);-webkit-backdrop-filter:blur(40px) saturate(1.6);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+.spot-in{display:flex;align-items:center;gap:12px;padding:14px 18px;color:var(--sub)}
+.spot-in input{flex:1;border:0;background:transparent;font:inherit;font-size:22px;color:var(--ink);outline:none}
+.spot-list{max-height:52vh;overflow:auto;border-top:1px solid var(--line);padding:6px}
+.spot-list:empty{display:none}
+.spot-list h5{margin:8px 10px 4px;font-size:11.5px;font-weight:600;color:var(--sub)}
+.sr{display:flex;align-items:center;gap:12px;width:100%;padding:7px 10px;border-radius:8px;text-align:left;font-size:14.5px;cursor:pointer}
+.sr img,.sr .sv,.sr .thumb{width:28px;height:28px;flex-shrink:0;border-radius:6px;object-fit:cover}
+.sr .sv svg{width:28px;height:28px}
+.sr small{margin-left:auto;font-size:12px;color:var(--sub)}
+.sr.on{background:var(--blue);color:#fff}
+.sr.on small{color:rgba(255,255,255,.8)}
+/* context menu */
+.ctx{position:fixed;z-index:9650;min-width:220px;padding:5px;border-radius:10px;background:var(--glass-strong);backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border:1px solid var(--line);box-shadow:0 12px 34px rgba(0,0,0,.18);display:none;font-size:13.5px}
+.ctx.show{display:block}
+.ctx button{display:flex;justify-content:space-between;width:100%;padding:5px 10px;border-radius:5px;cursor:pointer;text-align:left}
+.ctx button:hover,.ctx button:focus-visible{background:var(--blue);color:#fff;outline:none}
+.ctx button kbd{font:inherit;opacity:.6}
+.ctx hr{border:0;height:1px;background:var(--line);margin:5px 8px}
+/* toast */
+.toast{position:fixed;top:40px;right:14px;z-index:9400;width:340px;display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:18px;background:var(--glass-strong);backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border:1px solid var(--line);box-shadow:0 12px 34px rgba(0,0,0,.16);text-align:left;cursor:pointer;transform:translateX(calc(100% + 30px));transition:transform .45s cubic-bezier(.2,.9,.25,1)}
+.toast.show{transform:none}
+.toast .sv svg{width:38px;height:38px}
+.toast .tt{display:flex;flex-direction:column;gap:1px;font-size:13px;flex:1}
+.toast .tt b{font-size:13.5px}
+.toast small{align-self:flex-start;font-size:11.5px;color:var(--sub)}
+/* wallpapers */
+:root[data-wall="night"] .wall{background:radial-gradient(ellipse at 50% 35%,#2E2E33 0%,#0E0E10 70%)}
+:root[data-wall="night"] .wall .mark{color:rgba(255,255,255,.06)}
+:root[data-wall="night"] .wall .frost{background:rgba(14,14,16,.2)}
+:root[data-wall="night"] .dicon > span:not(.stack):not(.ic),:root[data-wall="night"] .dicon small,:root[data-wall="signal"] .dicon > span:not(.stack):not(.ic),:root[data-wall="signal"] .dicon small{color:#F5F5F7;background:rgba(0,0,0,.42)}
+:root[data-wall="minimal"] .wall .me{display:none}
+:root[data-wall="minimal"] .wall .mark{color:rgba(0,0,0,.08)}
+:root[data-wall="minimal"][data-mode="dark"] .wall .mark{color:rgba(255,255,255,.08)}
+:root[data-wall="signal"] .wall{background:radial-gradient(ellipse at 50% 35%,#F06A5F 0%,#C9281D 75%)}
+:root[data-wall="signal"] .wall .mark{color:rgba(0,0,0,.09)}
+:root[data-wall="signal"] .wall .frost{background:rgba(229,55,43,.1)}
+.walls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 20px}
+.walls button{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;cursor:pointer}
+.walls .pv{width:100%;aspect-ratio:16/10;border-radius:8px;border:2px solid var(--line);background-size:cover;background-position:center 20%}
+.walls button.act .pv{border-color:var(--blue)}
+/* legal */
+.legal{max-width:620px;font-size:14.5px;line-height:1.6}
+.legal h1{font-size:24px;margin:0 0 4px;letter-spacing:-.02em}
+.legal h2{font-size:16px;margin:20px 0 6px}
+.legal p,.legal li{color:var(--ink)}
+.legal .meta{color:var(--sub);font-size:13px}
+
+/* about this mac */
+.about{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:26px 30px;text-align:center}
+.about .pic{width:118px;height:118px;border-radius:50%;background:#DCDCE0 url(img/avatar.webp) center/cover no-repeat}
+.about h1{margin:6px 0 0;font-size:24px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center}
+.about h1 i{width:7px;height:7px;border-radius:50%;background:var(--red);margin:0 2px;align-self:flex-end;margin-bottom:6px}
+.about .role{color:var(--sub);font-size:14px;margin:0}
+.specs{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px;text-align:left;margin:8px 0}
+.specs span:nth-child(odd){color:var(--sub);text-align:right}
+
+/* compose */
+.compose{flex:1;display:flex;flex-direction:column}
+.field{display:flex;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--line);font-size:14px}
+.field label{color:var(--sub);width:62px}
+.field input{flex:1;border:0;background:transparent;font:inherit;color:inherit;outline:none}
+.compose textarea{flex:1;border:0;padding:16px 18px;font:inherit;font-size:14.5px;line-height:1.5;resize:none;background:transparent;color:inherit;outline:none;min-height:140px}
+.compose .foot{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--line);font-size:13px;color:var(--sub)}
+.compose .foot .btns{display:flex;gap:8px}
+.compose .foot .btn{flex:none;padding:8px 16px}
+
+/* tool windows */
+.tool{flex:1;display:flex;gap:22px;padding:24px;align-items:flex-start}
+.tool img{width:84px;flex-shrink:0}
+.tool h3{margin:0 0 6px;font-size:20px}
+.tool p{margin:0 0 12px;color:var(--sub);font-size:14.5px;line-height:1.5}
+.tool ul{margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.7}
+
+/* settings */
+.seg{display:flex;gap:16px;margin:8px 0 20px}
+.seg button{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.seg .sw{width:110px;height:70px;border-radius:10px;border:2px solid var(--line)}
+.seg button.act .sw{border-color:var(--blue)}
+.seg .sw.l{background:linear-gradient(#F5F5F7 0 30%,#E6E6E9 30%)}
+.seg .sw.d{background:linear-gradient(#2A2A2E 0 30%,#151517 30%)}
+
+/* dialog */
+.dialog{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);width:280px;padding:22px 20px 16px;border-radius:16px;background:var(--glass-strong);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;z-index:9500;display:none}
+.dialog.show{display:block}
+.dialog img{width:56px}
+.dialog h4{margin:10px 0 6px;font-size:14px}
+.dialog p{margin:0 0 16px;font-size:12.5px;color:var(--sub);line-height:1.45}
+.dialog .btn{display:block;width:100%}
+
+/* viewer */
+.viewer{position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:9600;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:40px}
+.viewer.show{display:flex}
+.viewer img,.viewer video{max-width:100%;max-height:calc(100vh - 120px);border-radius:10px}
+.viewer .cap{color:#F5F5F7;font-size:14px}
+.viewer .nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:26px;line-height:1;cursor:pointer}.viewer .prev{left:18px}.viewer .next{right:18px}
+.viewer .x{position:absolute;top:16px;right:18px;color:#fff;font-size:14px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.12);cursor:pointer}
+
+/* ---------- phone home screen ---------- */
+.home{display:none}
+@media (max-width:760px){
+  body{overflow-x:hidden;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding:52px 16px calc(120px + env(safe-area-inset-bottom));min-height:100%}
+  .wall{background:linear-gradient(180deg,#F4F4F6 0%,#E7E8EC 55%,#DCDEE3 100%)}
+  :root[data-mode="dark"] .wall{background:linear-gradient(180deg,#1C1C1F 0%,#121214 100%)}
+  .wall .mark,.wall .me,.wall .frost{display:none}
+  .toast{width:calc(100% - 24px);right:12px;top:52px}
+  #mbSearch{display:none}
+  .menubar{height:48px;padding:0 24px;background:transparent;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;font-size:16px}
+  .menubar .l{display:none}
+  .menubar .r{width:100%;justify-content:space-between}
+  .menubar .r > a{display:none}
+  .menubar .clock{order:-1;font-weight:600;padding:0}
+  .menubar .avail{font-size:13px;padding:0}
+  .desk{display:none}
+  .widget{position:relative;left:auto!important;top:auto!important;width:auto!important;margin:0;padding:14px;border-radius:22px;background:var(--glass-strong);box-shadow:0 6px 24px rgba(0,0,0,.07);z-index:5}
+  #wProfile{order:1}
+  #wProfile .rows{display:none}
+  #wProfile .top{gap:14px}
+  #wProfile .avatar{width:64px;height:64px}
+  #wProfile h2{font-size:19px}
+  #wProfile p{font-size:14px}
+  .feat{display:flex;order:2;flex-direction:column;gap:10px}
+  .feat .head,.clocks .head{font-size:13px;font-weight:600;color:var(--sub);display:flex;justify-content:space-between;align-items:center}
+  .feat .more{color:var(--blue);font-size:13px;font-weight:500;cursor:pointer}
+  .frow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .frow button{aspect-ratio:4/5;border-radius:10px;background:var(--side) center/cover no-repeat;cursor:pointer}
+  .home{display:grid;order:3;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 8px;padding:6px 4px;position:relative;z-index:5}
+  .happ{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11.5px;font-weight:500;text-decoration:none;color:var(--ink);cursor:pointer}
+  .happ img,.happ .sv{width:60px;height:60px;border-radius:14px}
+  .happ .cvic{display:flex;align-items:center;justify-content:center;background:#FFFFFF;box-shadow:inset 0 0 0 1px var(--line)}
+  .happ .cvic svg{width:34px;height:42px}
+  #wClock{order:4}
+  .widget.clocks{gap:10px}
+  .clocks .row{gap:6px}
+  .wc{padding:9px 9px 8px}
+  .wc .hm{font-size:20px}
+  .clocks .pitch{font-size:13px}
+  .dock{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);height:auto;padding:12px 16px;border-radius:32px;gap:18px;background:var(--glass)}
+  .dock .item img{width:58px;height:58px;transition:none}
+  .dock .tip,.dock .dot,.dock .sep,.dock .desk-only,.dock .mini{display:none}
+  #windows{inset:0;z-index:9200}
+  .win{left:0!important;top:0!important;width:100%!important;height:100%!important;border-radius:0;border:0;resize:none}
+  .lights{display:none}
+  .win.dlg{top:28%!important;left:16px!important;width:calc(100% - 32px)!important;height:auto!important;border-radius:16px}
+  .win.dlg .back{display:none}
+  .win.dlg .bar .title{margin-right:0}
+  .iprev{grid-template-columns:1fr}
+  .bar{height:54px;padding-top:4px}
+  .bar .back{display:flex;align-items:center;gap:4px;color:var(--blue);font-size:16px;cursor:pointer}
+  .bar .title{margin-right:60px}
+  .side{display:none}
+  .notes .side{display:flex;width:100%;border-right:0}
+  .notes .body.reading .side{display:none}
+  .notes .body:not(.reading) .main{display:none}
+  .main{padding:18px 16px 40px}
+  .tool{flex-direction:column}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .about{justify-content:flex-start;padding-top:40px}
+}
+
+/* ================= iPhone home screen ================= */
+@media (max-width:760px){
+  body{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row dense;column-gap:14px;row-gap:22px;align-content:start;padding:max(18px,env(safe-area-inset-top)) 20px calc(130px + env(safe-area-inset-bottom))}
+  .menubar{display:none}
+  .wall{background:linear-gradient(180deg,#3A3A3F 0%,#1C1C1F 60%,#0F0F11 100%)}
+  .wall .me{display:block;height:92vh;bottom:-14vh;opacity:.55;filter:grayscale(1) contrast(1.05)}
+  .wall::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45))}
+  .widget{border-radius:24px;padding:14px;background:rgba(255,255,255,.78);backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border:0;box-shadow:0 8px 30px rgba(0,0,0,.25);color:#1D1D1F;--ink:#1D1D1F;--sub:#6E6E73}
+  :root[data-mode="dark"] .widget{background:rgba(44,44,48,.72);color:#F5F5F7;--ink:#F5F5F7;--sub:#A1A1A6}
+  #wProfile{grid-column:1 / -1;order:1}
+  #wProfile .avatar{width:58px;height:58px}
+  #wProfile h2{font-size:18px}
+  #wProfile p{font-size:13.5px}
+  .wavail{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);margin-top:3px}
+  .wavail b{width:7px;height:7px;border-radius:50%;background:#28C840}
+  #wProfile .act .btn{padding:9px 10px;border-radius:12px}
+  #wClock{grid-column:span 2;order:2;align-self:stretch;padding:12px 14px;gap:6px;justify-content:space-between}
+  #wClock .head span:last-child,#wClock .pitch,#wClock #wc2{display:none}
+  #wClock .row{display:flex;flex-direction:column;gap:8px}
+  #wClock .wc,#wClock .wc.night{background:transparent;color:inherit;border:0;padding:0;display:flex;flex-direction:column;gap:0}
+  #wClock .wc b{font-size:12.5px;color:var(--sub);font-weight:600}
+  #wClock .wc .hm{font-size:24px;font-weight:600;letter-spacing:-.02em}
+  #wClock .wc .ss{font-size:12px}
+  #wClock .wc small.off{display:none}
+  #wClock .wc small.ap{font-size:11px;opacity:.7}
+  .home{display:contents}
+  .happ{order:5;position:relative;z-index:5;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,.55);font-size:11.5px;gap:5px}
+  :root[data-mode="dark"] .happ{text-shadow:0 1px 3px rgba(0,0,0,.55)}
+  .happ[data-open="finder"],.happ[data-open="about"],.happ[data-note="cv"],#homeLI{order:3}
+  .happ img,.happ .sv{width:62px;height:62px;border-radius:15px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+  .happ .sv svg{width:62px;height:62px}
+  .happ .cvic{background:#FFFFFF}
+  .feat{grid-column:1 / -1;order:4}
+  .feat .head{color:var(--sub)}
+  .frow button{border-radius:12px}
+  .dock{background:rgba(255,255,255,.28);border:0;border-radius:34px;padding:12px 16px;gap:20px;backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8);box-shadow:none}
+  .dock .item img{width:62px;height:62px;border-radius:15px}
+  .dock .item[data-book],.dock #dockLI{display:none}
+  .toast{border-radius:22px}
+  /* apps open full screen, iOS style */
+  .win{animation:iosopen .32s cubic-bezier(.2,.9,.25,1)}
+  @keyframes iosopen{from{transform:scale(.86);opacity:0;border-radius:40px}to{transform:none;opacity:1}}
+  .win.dlg{animation:none}
+  .bar{height:52px;border-bottom:0;padding-top:env(safe-area-inset-top)}
+  .bar .back{font-size:17px;gap:2px}
+  .bar .title{font-size:17px;font-weight:600}
+  .main h3{font-size:30px;letter-spacing:-.02em}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wall" aria-hidden="true">
+  <div class="mark">sa<i></i>hit</div>
+  <img class="me" src="img/sahit.webp" alt="">
+  <div class="frost"></div>
+</div>
+
+<header class="menubar">
+  <div class="l">
+    <button class="logo" data-open="about" aria-label="About Sahit">sa<i></i>hit</button>
+    <span class="app" id="activeApp">Finder</span>
+    <button data-open="finder">Work</button>
+    <button data-open="notes" data-note="about">About</button>
+    <button data-open="notes" data-note="cv">CV</button>
+    <button data-open="mail">Contact</button>
+  </div>
+  <div class="r">
+    <button id="mbSearch" aria-label="Search (Command K)"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+    <a id="mbLinkedIn" href="#" target="_blank" rel="noopener">LinkedIn</a>
+    <span class="avail"><b></b>Available for work</span>
+    <span class="clock" id="clock"></span>
+  </div>
+</header>
+
+<aside class="widget" id="wProfile" aria-label="Profile">
+  <div class="top">
+    <div class="avatar" role="img" aria-label="Sahit"></div>
+    <div><h2>Sahit Pothala</h2><p>Visual designer · Video editor</p><span class="wavail"><b></b>Available for work</span></div>
+  </div>
+  <div class="rows">
+    <span>Based in</span><span>Visakhapatnam, India</span>
+    <span>Local time</span><span id="ist"></span>
+    <span>Does</span><span>Ad creatives, reels, edits, thumbnails</span>
+  </div>
+  <div class="act">
+    <button class="btn" data-open="photos">See work</button>
+    <button class="btn primary" data-open="mail">Hire me</button>
+  </div>
+</aside>
+
+<aside class="widget clocks" id="wClock" aria-label="World clock">
+  <div class="head"><span>World Clock</span><span>Live</span></div>
+  <div class="row" id="wcRow"></div>
+  <p class="pitch">My evenings overlap your US mornings, so you get same-day replies and overnight turnarounds.</p>
+</aside>
+
+<aside class="widget feat" id="wFeat" aria-label="Featured work">
+  <div class="head"><span>Featured work</span><button class="more" data-open="photos">See all</button></div>
+  <div class="frow" id="featRow"></div>
+</aside>
+
+<nav class="desk" id="desk" aria-label="Desktop"></nav>
+
+<section class="home" aria-label="Apps">
+  <button class="happ" data-open="finder"><img src="img/finder.png" alt=""><span>Work</span></button>
+  <button class="happ" data-open="alert" data-joke="ps"><img src="img/ps.png" alt=""><span>Photoshop</span></button>
+  <button class="happ" data-open="alert" data-joke="pr"><img src="img/pr.png" alt=""><span>Premiere</span></button>
+  <button class="happ" data-open="about"><span class="sv" data-svg="me"></span><span>About</span></button>
+  <button class="happ" data-open="notes" data-note="cv"><span class="sv cvic" data-svg="doc"></span><span>CV</span></button>
+  <a class="happ" id="homeLI" href="#" target="_blank" rel="noopener"><img src="img/linkedin.png" alt=""><span>LinkedIn</span></a>
+  <button class="happ" data-book><img src="img/calendly.png" alt=""><span>Book a call</span></button>
+  <button class="happ" data-open="settings"><img src="img/settings.png" alt=""><span>Settings</span></button>
+</section>
+
+<nav class="dock" aria-label="Dock">
+  <button class="item desk-only" data-open="finder" data-app="finder"><img src="img/finder.png" alt="Finder"><span class="dot"></span><span class="tip">Finder</span></button>
+  <button class="item" data-open="photos" data-app="photos"><img src="img/photos.png" alt="Photos"><span class="dot"></span><span class="tip">Photos</span></button>
+  <button class="item" data-open="notes" data-app="notes"><img src="img/notes.png" alt="Notes"><span class="dot"></span><span class="tip">Notes</span></button>
+  <button class="item" data-open="mail" data-app="mail"><img src="img/mail.png" alt="Mail"><span class="dot"></span><span class="tip">Mail</span></button>
+  <a class="item" id="dockIG" href="#" target="_blank" rel="noopener"><img src="img/instagram.png" alt="Instagram"><span class="dot"></span><span class="tip">Instagram</span></a>
+  <a class="item desk-only" id="dockLI" href="#" target="_blank" rel="noopener"><img src="img/linkedin.png" alt="LinkedIn"><span class="dot"></span><span class="tip">LinkedIn</span></a>
+  <button class="item" data-book><img src="img/calendly.png" alt="Calendly"><span class="dot"></span><span class="tip">Book a call</span></button>
+  <span class="sep" role="separator" aria-orientation="vertical" aria-label="Drag up or down to resize the Dock" title="Drag to resize the Dock"></span>
+  <button class="item desk-only" data-open="alert" data-joke="ps" data-app="ps"><img src="img/ps.png" alt="Photoshop"><span class="dot"></span><span class="tip">Photoshop</span></button>
+  <button class="item desk-only" data-open="alert" data-joke="pr" data-app="pr"><img src="img/pr.png" alt="Premiere Pro"><span class="dot"></span><span class="tip">Premiere Pro</span></button>
+  <button class="item desk-only" data-open="alert" data-joke="alert" data-app="alertx"><img src="img/alert.png" alt="Alert"><span class="dot"></span><span class="tip">Do not click</span></button>
+  <button class="item desk-only" data-open="settings" data-app="settings"><img src="img/settings.png" alt="System Settings"><span class="dot"></span><span class="tip">System Settings</span></button>
+  <span class="sep" role="separator" aria-orientation="vertical" aria-label="Drag up or down to resize the Dock" title="Drag to resize the Dock"></span>
+  <button class="item desk-only" data-open="trash" data-app="trash"><img src="img/trash.png" alt="Trash"><span class="dot"></span><span class="tip">Trash</span></button>
+</nav>
+
+<div id="windows"></div>
+
+<div class="boot" id="boot" aria-hidden="true"><div class="bmark">sa<i></i>hit</div><div class="bbar"><b></b></div></div>
+
+<div class="spot" id="spot" role="dialog" aria-modal="true" aria-label="Spotlight search">
+  <div class="spot-box">
+    <div class="spot-in"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="spotQ" type="text" placeholder="Search projects, apps, notes" autocomplete="off" aria-label="Search"></div>
+    <div class="spot-list" id="spotList" role="listbox"></div>
+  </div>
+</div>
+
+<div class="ctx" id="ctx" role="menu"></div>
+
+<button class="toast" id="toast" aria-live="polite"><span class="sv" data-svg="me"></span><span class="tt"><b>sa.hit</b><span>Taking new projects. Click to send a brief.</span></span><small>now</small></button>
+
+<div class="dialog" id="dialog" role="alertdialog" aria-modal="true" aria-labelledby="dlgT">
+  <img src="img/alert.png" alt="">
+  <h4 id="dlgT"></h4>
+  <p id="dlgP"></p>
+  <button class="btn primary" id="dlgOk">OK</button>
+</div>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Preview">
+  <button class="x" id="vClose">Close</button>
+  <button class="nav prev" id="vPrev" aria-label="Previous">‹</button>
+  <div id="vMedia"></div>
+  <button class="nav next" id="vNext" aria-label="Next">›</button>
+  <div class="cap" id="vCap"></div>
+</div>
+
+<script>
+/* ================= EDIT HERE ================= */
+const CONFIG = {
+  email: "sahitsai6@gmail.com",
+  instagram: "https://www.instagram.com/_sahitt__/",
+  linkedin: "https://www.linkedin.com/in/sahitsaipothala/",
+  cv: "cv/Sahit_Sai_Pothala_CV.pdf",
+  calendly: "https://calendly.com/sahitsai6/new-meeting"
+};
+/* Add work here. cat: reels | thumbnails | design | web
+   img: thumbnail image path. video: mp4 path (optional). link: external URL (optional). */
+const WORK = [
+  {
+  "title": "Same coast different tide",
+  "cat": "samesame",
+  "img": "work/samesame-01-same-coast-different-tide.webp"
+  },
+  {
+  "title": "Wear the shape",
+  "cat": "samesame",
+  "img": "work/samesame-02-wear-the-shape.webp"
+  },
+  {
+  "title": "Same street same same",
+  "cat": "samesame",
+  "img": "work/samesame-03-same-street-same-same.webp"
+  },
+  {
+  "title": "Feet off the ground",
+  "cat": "fly",
+  "img": "work/fly-01-feet-off-the-ground.webp"
+  },
+  {
+  "title": "samesame x fly Where to",
+  "cat": "fly",
+  "img": "work/fly-02-samesame-x-fly-where-to.webp"
+  },
+  {
+  "title": "Colourways",
+  "cat": "beep",
+  "img": "work/beep-01-colourways.webp"
+  },
+  {
+  "title": "Big kid energy",
+  "cat": "beep",
+  "img": "work/beep-02-big-kid-energy.webp"
+  },
+  {
+  "title": "Bedtime says who",
+  "cat": "beep",
+  "img": "work/beep-03-bedtime-says-who.webp"
+  },
+  {
+  "title": "Recess",
+  "cat": "beep",
+  "img": "work/beep-04-recess.webp"
+  },
+  {
+  "title": "Pick your beep",
+  "cat": "beep",
+  "img": "work/beep-05-pick-your-beep.webp"
+  },
+  {
+  "title": "Chai time is a family thing",
+  "cat": "beep",
+  "img": "work/beep-06-chai-time-is-a-family-thing.webp"
+  },
+  {
+  "title": "Like father like beep",
+  "cat": "beep",
+  "img": "work/beep-07-like-father-like-beep.webp"
+  },
+  {
+  "title": "Moms new assistant",
+  "cat": "beep",
+  "img": "work/beep-08-moms-new-assistant.webp"
+  },
+  {
+  "title": "Get them one each",
+  "cat": "beep",
+  "img": "work/beep-09-get-them-one-each.webp"
+  },
+  {
+  "title": "Dry spell broken",
+  "cat": "runo",
+  "img": "work/runo-01-dry-spell-broken.webp"
+  },
+  {
+  "title": "Your skin is thirsty",
+  "cat": "runo",
+  "img": "work/runo-02-your-skin-is-thirsty.webp"
+  },
+  {
+  "title": "Wears the other one",
+  "cat": "wear",
+  "img": "work/wear-01-wears-the-other-one.webp"
+  },
+  {
+  "title": "Odd Pairs collection",
+  "cat": "wear",
+  "img": "work/wear-02-odd-pairs-collection.webp"
+  },
+  {
+  "title": "Some pairs are better together",
+  "cat": "wear",
+  "img": "work/wear-03-some-pairs-are-better-together.webp"
+  },
+  {
+  "title": "Always not out",
+  "cat": "wear",
+  "img": "work/wear-04-always-not-out.webp"
+  },
+  {
+  "title": "Monsoon mode on",
+  "cat": "wear",
+  "img": "work/wear-05-monsoon-mode-on.webp"
+  },
+  {
+  "title": "Shade lineup",
+  "cat": "bright",
+  "img": "work/bright-01-shade-lineup.webp"
+  },
+  {
+  "title": "Speak in colour",
+  "cat": "bright",
+  "img": "work/bright-02-speak-in-colour.webp"
+  },
+  {
+  "title": "Pick your volume",
+  "cat": "bright",
+  "img": "work/bright-03-pick-your-volume.webp"
+  },
+  {
+  "title": "Head to toe lips first",
+  "cat": "bright",
+  "img": "work/bright-04-head-to-toe-lips-first.webp"
+  },
+  {
+  "title": "Colour cast",
+  "cat": "bright",
+  "img": "work/bright-05-colour-cast.webp"
+  },
+  {
+  "title": "Stack the light",
+  "cat": "kaanch",
+  "img": "work/kaanch-01-stack-the-light.webp"
+  },
+  {
+  "title": "Handle with flair",
+  "cat": "kaanch",
+  "img": "work/kaanch-02-handle-with-flair.webp"
+  },
+  {
+  "title": "Fragile not her",
+  "cat": "kaanch",
+  "img": "work/kaanch-03-fragile-not-her.webp"
+  },
+  {
+  "title": "Announce yourself",
+  "cat": "kaanch",
+  "img": "work/kaanch-04-announce-yourself.webp"
+  },
+  {
+  "title": "Look closer",
+  "cat": "kaanch",
+  "img": "work/kaanch-05-look-closer.webp"
+  }
+  ];
+/* ============================================ */
+
+const FOLDERS = { samesame: "samesame", fly: "fly", beep: "beep", runo: "Runo", wear: "wear", bright: "bright", kaanch: "kaanch" };
+const INFO = {
+  samesame: { sub: 'Streetwear tees', text: 'A colour-block streetwear drop built on one line: same street, different stories. Primary shapes painted into real street corners, people who look like they actually live there, and a tee that does the talking.', type: 'Concept campaign > Social creatives > Art direction' },
+  fly: { sub: 'Sneakers', text: 'A sneaker that sells lift, so every frame is shot from the ground looking up. Mid-air jumps, concrete, and a samesame x fly collab poster to tie two brands into one drop.', type: 'Concept campaign > Collab poster > Social creatives' },
+  beep: { sub: 'Kids digital watch', text: 'A full nine-post family series for a kids digital watch. Colourways, recess, bedtime arguments, chai time with grandparents and a parent finding a new little assistant. Every post is a small story a parent recognises.', type: 'Concept campaign > Social series > Product colourways' },
+  runo: { sub: 'Skincare', text: 'Hydration told through texture: cracked, dry desert ground next to a single bottle that ends the dry spell. Two hero creatives with very little copy.', type: 'Concept campaign > Hero creatives' },
+  wear: { sub: 'Socks', text: 'Odd pairs as a personality. A cheeky sock campaign with mismatched pairs, monsoon days and a cricket moment, written in the voice of a brand that does not take itself too seriously.', type: 'Concept campaign > Social creatives > Copywriting' },
+  bright: { sub: 'Lipstick', text: 'Loud colour for people who speak in colour. A shade lineup, a volume chart for picking your intensity, and head-to-toe looks where the lips lead.', type: 'Concept campaign > Product lineup > Social creatives' },
+  kaanch: { sub: 'Glass bangles', text: 'Glass bangles shot like fine jewellery: stacked light, colour through glass and close-up texture. The line that holds it together is Fragile. Not her.', type: 'Concept campaign > Product photography > Social creatives' }
+};
+const JOKES = {
+  ps: { app: 'Adobe Photoshop', icon: 'img/ps.png', text: 'The client loved it. They would now like 14 more options, the logo bigger, and version one back.', btn: 'Make the logo bigger' },
+  pr: { app: 'Adobe Premiere Pro', icon: 'img/pr.png', text: 'Export is 99% complete. It has been 99% complete since your last chai.', btn: 'Make another chai' },
+  alert: { app: 'System Alert', icon: 'img/alert.png', text: 'sa.hit is available for new projects. Side effects include better hooks, cleaner cuts and thumbnails people click.', btn: 'Send a brief', mail: true }
+};
+const KINDS = { samesame: "Streetwear tees", fly: "Sneakers", beep: "Kids digital watch", runo: "Skincare", wear: "Socks", bright: "Lipstick", kaanch: "Glass bangles" };
+const SVG = {
+  folder: '<svg width="62" height="50" viewBox="0 0 62 50" aria-hidden="true"><path d="M3 8a5 5 0 0 1 5-5h15l5 5h26a5 5 0 0 1 5 5v29a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z" fill="#3D9BEA"/><path d="M3 15h56v27a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z" fill="#69B7F5"/><path d="M3 15h56v2H3z" fill="#8FCBFA"/></svg>',
+  doc: '<svg width="46" height="58" viewBox="0 0 46 58" aria-hidden="true"><path d="M3 4a3 3 0 0 1 3-3h24l13 13v40a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z" fill="#FFFFFF" stroke="#CFCFD4"/><path d="M30 1v10a3 3 0 0 0 3 3h10" fill="#F0F0F3" stroke="#CFCFD4"/><rect x="10" y="22" width="26" height="2.5" rx="1" fill="#C7C7CC"/><rect x="10" y="29" width="22" height="2.5" rx="1" fill="#C7C7CC"/><rect x="10" y="36" width="25" height="2.5" rx="1" fill="#C7C7CC"/><text x="10" y="50" font-family="Helvetica,Arial" font-size="7" font-weight="700" fill="#E5372B">PDF</text></svg>',
+  me: '<svg width="60" height="60" viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" rx="14" fill="#000"/><text x="9" y="37" font-family="-apple-system,Helvetica,Arial" font-weight="700" font-size="19" fill="#fff">sa</text><circle cx="31.5" cy="34.5" r="2.6" fill="#E5372B"/><text x="35" y="37" font-family="-apple-system,Helvetica,Arial" font-weight="700" font-size="19" fill="#fff">h</text></svg>',
+  side: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 4a1.5 1.5 0 0 1 1.5-1.5h3.2l1.4 1.4H13A1.5 1.5 0 0 1 14.5 5.4v6.6A1.5 1.5 0 0 1 13 13.5H3A1.5 1.5 0 0 1 1.5 12z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+  photo: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="5.5" cy="6" r="1.3" fill="currentColor"/><path d="M2 12l4-4 3 3 2-2 3 3" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>',
+  back: '<svg width="10" height="16" viewBox="0 0 10 16" aria-hidden="true"><path d="M8 2L2 8l6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  x: '<svg width="6" height="6" viewBox="0 0 6 6"><path d="M1 1l4 4M5 1L1 5" stroke="currentColor" stroke-width="1.2"/></svg>',
+  minus: '<svg width="6" height="6" viewBox="0 0 6 6"><path d="M.5 3h5" stroke="currentColor" stroke-width="1.2"/></svg>',
+  plus: '<svg width="6" height="6" viewBox="0 0 6 6"><path d="M3 .5v5M.5 3h5" stroke="currentColor" stroke-width="1.2"/></svg>'
+};
+document.querySelectorAll('[data-svg]').forEach(el => el.innerHTML = SVG[el.dataset.svg]);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* links */
+const ig = document.getElementById('dockIG'); ig.href = CONFIG.instagram;
+document.getElementById('mbLinkedIn').href = CONFIG.linkedin;
+document.getElementById('dockLI').href = CONFIG.linkedin;
+document.getElementById('homeLI').href = CONFIG.linkedin;
+
+/* clocks: menu bar, profile widget, world clock (live, every second) */
+const ZONES = [
+  { city: 'India', tz: 'Asia/Kolkata', tag: 'IST' },
+  { city: 'New York', tz: 'America/New_York', tag: 'ET' },
+  { city: 'Los Angeles', tz: 'America/Los_Angeles', tag: 'PT' }
+];
+function zparts(tz, d){
+  const p = new Intl.DateTimeFormat('en-US',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(d);
+  const g = t => +p.find(x => x.type === t).value;
+  return { y:g('year'), mo:g('month'), d:g('day'), h:g('hour') % 24, m:g('minute'), s:g('second') };
+}
+const wcRow = document.getElementById('wcRow');
+wcRow.innerHTML = ZONES.map((z,i) => `<div class="wc" id="wc${i}"><b>${z.city}</b><div class="t"><span class="hm"></span><span class="ss"></span></div><small class="ap"></small><small class="off"></small></div>`).join('');
+function tick(){
+  const now = new Date();
+  document.getElementById('clock').textContent = innerWidth <= 760
+    ? now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M/,'')
+    : now.toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).replace(/,/g,'');
+  document.getElementById('ist').textContent = now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}) + ' IST';
+  const ist = zparts('Asia/Kolkata', now);
+  ZONES.forEach((z,i) => {
+    const t = zparts(z.tz, now), el = document.getElementById('wc' + i);
+    el.classList.toggle('night', t.h < 6 || t.h >= 18);
+    el.querySelector('.hm').textContent = ((t.h % 12) || 12) + ':' + String(t.m).padStart(2,'0');
+    el.querySelector('.ss').textContent = String(t.s).padStart(2,'0');
+    
+    let diff = (Date.UTC(t.y,t.mo-1,t.d,t.h,t.m) - Date.UTC(ist.y,ist.mo-1,ist.d,ist.h,ist.m)) / 60000;
+    const dayDiff = Date.UTC(t.y,t.mo-1,t.d) - Date.UTC(ist.y,ist.mo-1,ist.d);
+    const day = dayDiff < 0 ? 'Yesterday' : dayDiff > 0 ? 'Tomorrow' : 'Today';
+    const a = Math.abs(diff), hh = Math.floor(a / 60), mm = a % 60;
+    el.querySelector('.ap').textContent = (t.h < 12 ? 'AM' : 'PM') + ' · ' + day;
+    el.querySelector('.off').textContent = diff === 0 ? z.tag : `${z.tag} · ${diff < 0 ? '−' : '+'}${hh}${mm ? ':' + String(mm).padStart(2,'0') : ''}h`;
+  });
+}
+tick();
+setTimeout(() => { tick(); setInterval(tick, 1000); }, 1000 - (Date.now() % 1000));
+
+/* ---------- content builders ---------- */
+function tilesFor(list){
+  if (!list.length) return `<div class="empty"><span data-svg="folder"></span><b>Nothing here yet</b>New projects are being added. Meanwhile, see my latest work on Instagram.<a class="btn primary" style="flex:none;margin-top:6px" href="${esc(CONFIG.instagram)}" target="_blank" rel="noopener">Open Instagram</a></div>`;
+  return '<div class="grid">' + list.map((w,i) => `<button class="tile" data-work="${WORK.indexOf(w)}"><div class="th" style="background-image:url('${esc(w.img)}')"></div><span>${esc(w.title)}</span><small>${esc(FOLDERS[w.cat])} · ${esc(KINDS[w.cat])}</small></button>`).join('') + '</div>';
+}
+function finderMain(folder){
+  const list = folder ? WORK.filter(w => w.cat === folder) : WORK;
+  return `<h3>${folder ? FOLDERS[folder] : 'All work'}</h3><p style="margin:-8px 0 16px;color:var(--sub);font-size:13.5px">${folder ? KINDS[folder] + ' · concept ad campaign · ' + list.length + ' creatives' : 'AI-generated ad campaigns for seven concept brands'}</p>` + tilesFor(list);
+}
+const NOTES = {
+  about: { t: 'About me', s: 'Visual designer and video editor', html: `
+    <div class="date">Visakhapatnam, India</div>
+    <h1>Hi, I'm Sahit.</h1>
+    <p>I'm a visual designer and video editor. I design ad campaigns and social creatives that bring in leads, and I edit talking-head videos and reels so viewers stay past the first few seconds.</p>
+    <p>I'm a Design Executive at Yellow Slate, a school search platform for parents, where I make the ads, creatives and reels that market partner schools. On the side I edit for creators and brands. I use AI to work faster without making the work look generic.</p>
+    <h2>What I can do for you</h2>
+    <ul class="check">
+      <li>Ad campaigns and lead-focused social creatives</li>
+      <li>Yap and talking-head edits with motion graphics, captions and SFX</li>
+      <li>Short-form reels and YouTube thumbnails</li>
+      <li>Brand identity and posters</li>
+    </ul>
+    <h2>Selected work</h2>
+    <p>AI-generated ad campaigns for seven concept brands: samesame, fly, beep, Runo, wear, bright and kaanch. Open Photos in the Dock to see them.</p>` },
+  cv: { t: 'CV', s: 'Experience, skills, education', html: `
+    <div class="date">Curriculum vitae</div>
+    <h1>Sahit Sai Pothala</h1>
+    <p class="meta">AI Visual Designer · AI Video Generator and Editor · Visakhapatnam</p>
+    <p><a class="btn primary" style="display:inline-block;flex:none;padding:8px 16px" href="${CONFIG.cv}" target="_blank" rel="noopener">Open CV as PDF</a></p>
+    <h2>Experience</h2>
+    <p><strong>Design Executive</strong>, Yellow Slate<br><span class="meta">1 year · Present</span></p>
+    <ul>
+      <li>Create the marketing creatives and ad campaigns that promote partner schools and generate admission leads.</li>
+      <li>Designed client-approved "Admissions Open 2027-28" campaigns and Meta ad creatives within each school's brand kit.</li>
+      <li>Created content strategy, pitch deck and monthly playbooks for the first school marketing client.</li>
+      <li>Produced school review reels with motion graphics.</li>
+    </ul>
+    <p><strong>Freelance Video Editor and Designer</strong><br><span class="meta">Present</span></p>
+    <ul>
+      <li>Edit yap (talking-head) content and short-form reels with motion graphics, captions, SFX and thumbnails.</li>
+      <li>Designed YouTube thumbnails that grew views, and helped one channel reach monetization.</li>
+      <li>Design social media creatives, posters and brand identities.</li>
+    </ul>
+    <h2>Skills</h2>
+    <p><strong>Software</strong> <span class="meta">Premiere Pro, Photoshop, Canva, After Effects (basic), Illustrator (basic)</span></p>
+    <p><strong>AI tools</strong> <span class="meta">Higgsfield, HeyGen, Midjourney, Magnific, Freepik, Google Flow / Veo, ElevenLabs</span></p>
+    <p><strong>Automation</strong> <span class="meta">n8n workflows</span></p>
+    <p><strong>Video</strong> <span class="meta">Talking-head editing, reels, motion graphics, thumbnails</span></p>
+    <h2>Education</h2>
+    <p><strong>BTech, Information Technology</strong>, Vishnu Institute of Technology, Bhimavaram<br><span class="meta">2027 · CGPA 8.1</span></p>
+    <p><strong>Diploma, Computer Science and Engineering (CME)</strong>, Government Polytechnic, Srikakulam<br><span class="meta">2024 · 79.8%</span></p>
+    <h2>Certifications</h2>
+    <ul><li>NCC 'C' Certificate</li><li>Data Analytics Program, Deloitte</li></ul>` },
+  interests: { t: 'Interests', c: '∞', s: 'What I do when not editing', html: `
+    <div class="date">Off the clock</div>
+    <h1>Interests</h1>
+    <ul class="check">
+      <li>Trying every new AI tool the week it launches</li>
+      <li>Digging through new GitHub repos</li>
+      <li>Editing videos with AI in the loop</li>
+      <li>Building side projects that turn into businesses</li>
+    </ul>` },
+  contact: { t: 'Contact', s: 'Email, Instagram, LinkedIn', html: `
+    <div class="date">Let's work together</div>
+    <h1>Get in touch</h1>
+    <p>Send me your raw footage or brief and I'll reply with ideas.</p>
+    <ul>
+      <li>Email: <a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a> · <a href="https://mail.google.com/mail/?view=cm&fs=1&to=${esc(CONFIG.email)}" target="_blank" rel="noopener">open in Gmail</a></li>
+      <li>Instagram: <a href="${esc(CONFIG.instagram)}" target="_blank" rel="noopener">${esc(CONFIG.instagram.replace(/^https?:\/\/(www\.)?/,''))}</a></li>
+      <li>LinkedIn: <a href="${esc(CONFIG.linkedin)}" target="_blank" rel="noopener">${esc(CONFIG.linkedin.replace(/^https?:\/\/(www\.)?/,''))}</a></li>
+    </ul>` }
+};
+
+const APPS = {
+  finder: { title: 'Work', w: 760, h: 480, render: o => `
+    <div class="body"><div class="side"><h4>Favourites</h4>
+      <button data-f="" class="${!o.folder?'act':''}">${SVG.side}All work</button><h4>Campaigns</h4>
+      ${Object.entries(FOLDERS).map(([k,v]) => `<button data-f="${k}" class="${o.folder===k?'act':''}">${SVG.side}${v}</button>`).join('')}
+    </div><div class="main">${finderMain(o.folder)}</div></div>`,
+    wire: (win) => win.querySelectorAll('.side [data-f]').forEach(b => b.onclick = () => {
+      win.querySelectorAll('.side button').forEach(x => x.classList.toggle('act', x === b));
+      win.querySelector('.main').innerHTML = finderMain(b.dataset.f || null); wireWork(win); fillSvg(win);
+      win.querySelector('.title').textContent = b.dataset.f ? FOLDERS[b.dataset.f] : 'Work';
+    }) },
+  photos: { title: 'Photos', w: 820, h: 520, render: () => `
+    <div class="body"><div class="side"><h4>Photos</h4>
+      <button data-f="" class="act">${SVG.photo}Library</button><h4>Albums</h4>
+      ${Object.entries(FOLDERS).map(([k,v]) => `<button data-f="${k}">${SVG.photo}${v}</button>`).join('')}
+    </div><div class="main">${finderMain(null).replace('All work','Library')}</div></div>`,
+    wire: (win) => win.querySelectorAll('.side [data-f]').forEach(b => b.onclick = () => {
+      win.querySelectorAll('.side button').forEach(x => x.classList.toggle('act', x === b));
+      win.querySelector('.main').innerHTML = finderMain(b.dataset.f || null).replace('All work','Library'); wireWork(win); fillSvg(win);
+    }) },
+  notes: { title: 'Notes', w: 820, h: 560, cls: 'notes', render: o => `
+    <div class="body reading"><div class="side">
+      ${Object.entries(NOTES).map(([k,n]) => `<button class="note-item ${k===(o.note||'about')?'act':''}" data-n="${k}"><span class="nt"><strong>${n.t}</strong><em>${n.c || (n.html.match(/<li/g)||[]).length}</em></span><small>${n.s}</small></button>`).join('')}
+    </div><div class="main"><div class="note">${NOTES[o.note||'about'].html}</div></div></div>`,
+    wire: (win) => win.querySelectorAll('[data-n]').forEach(b => b.onclick = () => {
+      win.querySelectorAll('[data-n]').forEach(x => x.classList.toggle('act', x === b));
+      win.querySelector('.note').innerHTML = NOTES[b.dataset.n].html;
+      win.querySelector('.body').classList.add('reading'); win.querySelector('.main').scrollTop = 0;
+    }) },
+  mail: { title: 'New Message', w: 560, h: 460, render: () => `
+    <div class="compose">
+      <div class="field"><label for="mTo">To:</label><input id="mTo" value="${esc(CONFIG.email ? 'Sahit <'+CONFIG.email+'>' : 'Sahit')}" readonly></div>
+      <div class="field"><label for="mSub">Subject:</label><input id="mSub" value="Project enquiry"></div>
+      <textarea id="mBody" aria-label="Message">Hi Sahit,
+
+I'd like help with:
+Links to my channel or footage:
+Budget and deadline:
+</textarea>
+      <div class="foot"><span>${CONFIG.email ? esc(CONFIG.email) : 'Email address coming soon'}</span>
+        <div class="btns"><a class="btn" href="${esc(CONFIG.instagram)}" target="_blank" rel="noopener">DM on Instagram</a><button class="btn primary" id="mSend">Send</button></div></div>
+    </div>`,
+    wire: (win) => win.querySelector('#mSend').onclick = () => {
+      if (!CONFIG.email) return dialog('Email not set up yet', 'Please message me on Instagram for now.');
+      const s = encodeURIComponent(win.querySelector('#mSub').value), b = encodeURIComponent(win.querySelector('#mBody').value);
+      location.href = `mailto:${CONFIG.email}?subject=${s}&body=${b}`;
+    } },
+  about: { title: '', w: 380, h: 470, render: () => `
+    <div class="about"><div class="pic" role="img" aria-label="Sahit"></div>
+      <h1>sa<i></i>hit</h1><p class="role">Visual Designer and Video Editor</p>
+      <div class="specs"><span>Name</span><span>Sahit Pothala</span><span>Based in</span><span>Visakhapatnam, India</span><span>Role</span><span>Design Executive, Yellow Slate</span><span>Tools</span><span>Premiere Pro, Photoshop, Higgsfield</span><span>Open to</span><span>Freelance edits and design</span></div>
+      <button class="btn" style="flex:none;padding:7px 18px" data-open="notes" data-note="about">More Info...</button></div>` },
+  info: { title: 'Information', w: 680, h: 640, cls: 'info', titleFor: o => 'Information about: ' + FOLDERS[o.folder], render: o => {
+    const list = WORK.map((w,i) => [w,i]).filter(([w]) => w.cat === o.folder), d = INFO[o.folder];
+    return `<div class="ibody">
+      <div class="ihead"><span class="istack">${list.slice(0,3).reverse().map(([w],i) => `<img src="${esc(w.img)}" alt="" style="--r:${(i-1)*6}deg">`).join('')}</span><div><strong>${esc(FOLDERS[o.folder])}</strong><span>${esc(d.sub)} · concept ad campaign</span></div></div>
+      <p class="idesc">${esc(d.text)}</p>
+      <details open><summary>Details:</summary><div class="irows"><span>Type:</span><span>${esc(d.type)}</span><span>Pieces:</span><span>${list.length} creatives, 4:5 feed format</span><span>Made with:</span><span>AI image generation, art direction by Sahit</span></div></details>
+      <details open><summary>Preview:</summary><div class="iprev">${list.map(([w,i]) => `<button class="tile" data-work="${i}"><img src="${esc(w.img)}" alt="${esc(w.title)}" loading="lazy"><span>${esc(w.title)}</span></button>`).join('')}</div></details>
+    </div>`; } },
+  mailpick: { title: 'Mail', w: 620, h: 250, cls: 'dlg', titleFor: () => 'Mail', render: () => { const L = mailLinks(); return `<div class="dbody"><img src="img/mail.png" alt=""><div><p style="margin-top:0"><strong>Email Sahit</strong></p><p class="maddr">${esc(CONFIG.email)}</p><p style="color:#A1A1A6;font-size:13px">Choose how you want to write. The subject and a short brief are filled in for you.</p></div></div>
+    <div class="dfoot mopts"><button class="dbtn ghost" data-copy>Copy email</button><a class="dbtn ghost" href="${esc(L.app)}" target="_top" data-close>Mail app</a><a class="dbtn ghost" href="${esc(L.outlook)}" target="_blank" rel="noopener" data-close>Outlook</a><a class="dbtn" href="${esc(L.gmail)}" target="_blank" rel="noopener" data-close>Open in Gmail</a></div>`; },
+    wire: (win) => { const b = win.querySelector('[data-copy]'); b.onclick = async () => { try { await navigator.clipboard.writeText(CONFIG.email); b.textContent = 'Copied'; } catch(e) { const r = document.createRange(); r.selectNodeContents(win.querySelector('.maddr')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = 'Selected, press ⌘C'; } }; } },
+  alert: { title: '', w: 560, h: 210, cls: 'dlg', titleFor: o => JOKES[o.joke].app, render: o => { const j = JOKES[o.joke]; return `<div class="dbody"><img src="${j.icon}" alt=""><p>${esc(j.text)}</p></div><div class="dfoot"><button class="dbtn" data-close ${j.mail ? 'data-open="mail"' : ''}>${esc(j.btn)}</button></div>`; } },
+  ps: { title: 'Photoshop', w: 520, h: 330, render: () => `
+    <div class="tool"><img src="img/ps.png" alt=""><div><h3>The design side</h3><p>Thumbnails, social creatives and brand visuals.</p>
+      <ul><li>Ad campaigns and social creatives</li><li>YouTube thumbnails built to be clicked</li><li>Brand identity and posters</li></ul>
+      <button class="btn primary" style="flex:none;padding:8px 16px" data-open="photos">Open Photos</button></div></div>` },
+  pr: { title: 'Premiere Pro', w: 520, h: 330, render: () => `
+    <div class="tool"><img src="img/pr.png" alt=""><div><h3>The edit side</h3><p>Talking-head videos and reels cut for retention.</p>
+      <ul><li>Hooks in the first three seconds</li><li>Captions, punch-ins and b-roll</li><li>Sound design and clean pacing</li></ul>
+      <a class="btn primary" style="flex:none;padding:8px 16px;display:inline-block" href="${esc(CONFIG.instagram)}" target="_blank" rel="noopener">Watch reels on Instagram</a></div></div>` },
+  settings: { title: 'System Settings', w: 560, h: 600, render: () => `
+    <div class="main"><h3>Appearance</h3>
+      <div class="seg"><button data-mode="light"><span class="sw l"></span>Light</button><button data-mode="dark"><span class="sw d"></span>Dark</button></div>
+      <h3>Wallpaper</h3>
+      <div class="walls">${[['studio','Studio','radial-gradient(#FAFAFB,#E6E6E9)',1],['night','Night','radial-gradient(#2E2E33,#0E0E10)',1],['minimal','Minimal','radial-gradient(#FAFAFB,#E6E6E9)',0],['signal','Signal','radial-gradient(#F06A5F,#C9281D)',1]].map(([k,n,bg,ph]) => `<button data-wall="${k}"><span class="pv" style="background-image:${ph ? "url(img/sahit.webp)," : ''}${bg};background-size:${ph ? '60% auto,cover' : 'cover'};background-repeat:no-repeat;background-position:center 10%,center"></span>${n}</button>`).join('')}</div>
+      <h3>Desktop</h3><p style="color:var(--sub);font-size:13px;margin:-6px 0 10px">Drag any project or widget anywhere. Your layout is kept in this browser.</p>
+      <button class="btn" style="flex:none;padding:8px 14px;display:inline-block" id="resetDesk">Reset desktop layout</button>
+      <p style="color:var(--sub);font-size:13px;margin:18px 0 0">Designed and built by Sahit. Icons belong to their owners. <a href="#" data-open="privacy">Privacy Policy</a> · <a href="#" data-open="terms">Terms</a></p></div>`,
+    wire: (win) => { const set = () => win.querySelectorAll('[data-mode]').forEach(b => b.classList.toggle('act', b.dataset.mode === (document.documentElement.dataset.mode || 'light')));
+      win.querySelector('#resetDesk').onclick = () => { POS = {}; savePos(); location.reload(); };
+      const sw = () => win.querySelectorAll('[data-wall]').forEach(b => b.classList.toggle('act', b.dataset.wall === (document.documentElement.dataset.wall || 'studio')));
+      sw(); win.querySelectorAll('[data-wall]').forEach(b => b.onclick = () => { setWall(b.dataset.wall); sw(); });
+      set(); win.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { document.documentElement.dataset.mode = b.dataset.mode; try{localStorage.setItem('mode', b.dataset.mode)}catch(e){}; set(); }); } },
+  privacy: { title: 'Privacy Policy', w: 640, h: 560, render: () => `<div class="main"><div class="legal">
+    <h1>Privacy Policy</h1><p class="meta">Last updated: November 2026</p>
+    <p>This is Sahit Pothala's personal portfolio. It is built to collect as little as possible.</p>
+    <h2>What this site stores</h2>
+    <ul><li>Your theme, wallpaper, Dock size and where you dragged things on the desktop. These are saved only in your own browser (local storage) so the site looks the way you left it.</li><li>No accounts, no ad trackers and no third-party analytics run on this site.</li></ul>
+    <h2>When you contact me</h2>
+    <p>If you email me or message me on Instagram or LinkedIn, I receive what you send and use it only to reply to you and discuss your project. I do not sell or share it.</p>
+    <h2>Third parties</h2>
+    <p>Links to Instagram, LinkedIn and email open those services, which have their own privacy policies. Fonts may load from Google Fonts.</p>
+    <h2>Your choices</h2>
+    <p>Clear your browser's site data to remove anything stored. To ask about your data, email ${esc(CONFIG.email)}.</p>
+  </div></div>` },
+  terms: { title: 'Terms', w: 640, h: 560, render: () => `<div class="main"><div class="legal">
+    <h1>Terms of Use</h1><p class="meta">Last updated: November 2026</p>
+    <h2>The work</h2>
+    <p>All designs, creatives, copy and video on this site are Sahit Pothala's portfolio work. You may view and share links to them. Please do not reuse, resell or present them as your own without written permission.</p>
+    <h2>Concept brands</h2>
+    <p>samesame, fly, beep, Runo, wear, bright and kaanch are concept brands created for this portfolio. The campaigns are not paid work for real companies, and any resemblance to real brands is not intended.</p>
+    <h2>Trademarks</h2>
+    <p>App icons and names such as Photoshop, Premiere Pro, Instagram and LinkedIn belong to their owners and are used here only to point to tools and profiles.</p>
+    <h2>No warranty</h2>
+    <p>This site is provided as is. Project quotes and timelines are agreed separately, in writing, for each job.</p>
+    <h2>Contact</h2><p>${esc(CONFIG.email)}</p>
+  </div></div>` },
+  trash: { title: 'Trash', w: 520, h: 320, render: () => `
+    <div class="main"><div class="empty"><img src="img/trash.png" alt=""><b>Trash is empty</b>Nothing gets thrown away until the client signs off.</div></div>` }
+};
+try { const m = localStorage.getItem('mode'); if (m) document.documentElement.dataset.mode = m; } catch(e){}
+function setWall(k){ document.documentElement.dataset.wall = k; try { localStorage.setItem('wall', k); } catch(e){} }
+try { const wl = localStorage.getItem('wall'); if (wl) document.documentElement.dataset.wall = wl; } catch(e){}
+
+/* ---------- window manager ---------- */
+const layer = document.getElementById('windows');
+const open = {}; let z = 10, cascade = 0;
+function fillSvg(root){ root.querySelectorAll('[data-svg]').forEach(el => el.innerHTML = SVG[el.dataset.svg]); }
+function setActive(id){ document.getElementById('activeApp').textContent = id ? (APPS[id].title || 'sa.hit') : 'Finder'; }
+
+function syncDock(){ const apps = new Set(Object.values(open).map(w => w.dataset.app)); document.querySelectorAll('.dock [data-app]').forEach(b => b.classList.toggle('on', apps.has(b.dataset.app))); }
+function focusWin(w){ w.style.zIndex = ++z; setActive(w.dataset.app); }
+
+const MAIL_SUBJECT = 'Project enquiry';
+const MAIL_BODY = "Hi Sahit,\n\nI'd like help with:\nLinks to my channel or footage:\nBudget and deadline:\n";
+function mailLinks(){
+  const su = encodeURIComponent(MAIL_SUBJECT), bo = encodeURIComponent(MAIL_BODY);
+  return {
+    app: `mailto:${CONFIG.email}?subject=${su}&body=${bo}`,
+    gmail: `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONFIG.email)}&su=${su}&body=${bo}`,
+    outlook: `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(CONFIG.email)}&subject=${su}&body=${bo}`
+  };
+}
+function openApp(id, opts = {}){
+  if (id === 'mail') { id = 'mailpick'; opts = { key: 'm' + (++jokeN) }; }
+  const key = opts.key ? id + ':' + opts.key : id;
+  let w = open[key];
+  if (w){
+    if (opts.folder !== undefined && id === 'finder') { const b = w.querySelector(`.side [data-f="${opts.folder||''}"]`); b && b.click(); }
+    if (opts.note && id === 'notes') { const b = w.querySelector(`[data-n="${opts.note}"]`); b && b.click(); }
+    restoreWin(w); return;
+  }
+  const a = APPS[id];
+  w = document.createElement('section');
+  w.className = 'win opening ' + (a.cls || ''); w.dataset.app = id; w.dataset.key = key;
+  w.setAttribute('role','dialog'); w.setAttribute('aria-label', a.title || 'About');
+  const vw = innerWidth, vh = innerHeight - 30;
+  const ww = Math.min(a.w, vw - 40), hh = Math.min(a.h, vh - 120);
+  w.style.width = ww + 'px'; w.style.height = hh + 'px';
+  w.style.left = Math.max(10, (vw - ww) / 2 + cascade) + 'px';
+  w.style.top = Math.max(10, (vh - hh) / 2 - 40 + cascade) + 'px';
+  cascade = (cascade + 26) % 130;
+  const title = a.titleFor ? a.titleFor(opts) : (id === 'finder' && opts.folder ? FOLDERS[opts.folder] : (a.title || ''));
+  w.innerHTML = `<div class="bar"><div class="lights"><button class="c" aria-label="Close">${SVG.x}</button><button class="m" aria-label="Minimise">${SVG.minus}</button><button class="z" aria-label="Zoom">${SVG.plus}</button></div><button class="back" aria-label="Back">${SVG.back}Home</button><div class="title">${esc(title)}</div></div>` + a.render(opts);
+  layer.appendChild(w); open[key] = w; focusWin(w); fillSvg(w);
+  setTimeout(() => w.classList.remove('opening'), 200);
+  a.wire && a.wire(w); wireWork(w); wireOpeners(w);
+  w.addEventListener('pointerdown', () => focusWin(w));
+  const close = () => { const tl = document.querySelector(`.dock [data-min-of="${CSS.escape(key)}"]`); tl && tl.remove(); w.remove(); delete open[key]; syncDock(); setActive(null); };
+  w.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  w.querySelector('.c').onclick = close;
+  w.querySelector('.back').onclick = () => {
+    const body = w.querySelector('.notes .body, .body');
+    if (id === 'notes' && body.classList.contains('reading')) { body.classList.remove('reading'); return; }
+    close();
+  };
+  w.querySelector('.m').onclick = () => minimizeWin(w);
+  w.querySelector('.z').onclick = () => w.classList.toggle('max');
+  drag(w); syncDock();
+}
+/* ---------- minimise to Dock, restore from Dock ---------- */
+const ICONS = { finder: 'img/finder.png', photos: 'img/photos.png', notes: 'img/notes.png', settings: 'img/settings.png', trash: 'img/trash.png', privacy: 'img/settings.png', terms: 'img/settings.png', about: 'img/avatar.webp', mailpick: 'img/mail.png' };
+function winIcon(w){
+  const id = w.dataset.app, k = w.dataset.key;
+  if (id === 'info') { const f = k.split(':')[1]; const it = WORK.find(x => x.cat === f); return it ? it.img : 'img/finder.png'; }
+  if (id === 'alert') { const img = w.querySelector('.dbody img'); return img ? img.getAttribute('src') : 'img/alert.png'; }
+  return ICONS[id] || 'img/finder.png';
+}
+function minimizeWin(w){
+  if (w.classList.contains('min')) return;
+  const dock = document.querySelector('.dock'), trash = dock.querySelector('[data-app="trash"]');
+  const tile = document.createElement('button');
+  tile.className = 'item mini'; tile.dataset.minOf = w.dataset.key;
+  tile.innerHTML = `<img src="${esc(winIcon(w))}" alt="${esc(w.querySelector('.title').textContent || 'Window')}"><span class="dot"></span><span class="tip">${esc(w.querySelector('.title').textContent || 'Window')}</span>`;
+  dock.insertBefore(tile, trash);
+  tile.onclick = () => restoreWin(w);
+  const r = w.getBoundingClientRect(), t = tile.getBoundingClientRect();
+  const dx = t.left + t.width / 2 - (r.left + r.width / 2), dy = t.top + t.height / 2 - (r.top + r.height / 2);
+  const done = () => { w.classList.add('min'); setActive(null); };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !w.animate) return done();
+  w.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${dx}px, ${dy}px) scale(.08)`, opacity: .3 }], { duration: 320, easing: 'cubic-bezier(.4,0,.6,1)' }).onfinish = done;
+}
+function restoreWin(w){
+  const tile = document.querySelector(`.dock [data-min-of="${CSS.escape(w.dataset.key)}"]`);
+  const wasMin = w.classList.contains('min');
+  w.classList.remove('min'); focusWin(w);
+  if (tile) {
+    const r = w.getBoundingClientRect(), t = tile.getBoundingClientRect();
+    if (wasMin && w.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+      w.animate([{ transform: `translate(${t.left + t.width / 2 - (r.left + r.width / 2)}px, ${t.top + t.height / 2 - (r.top + r.height / 2)}px) scale(.08)`, opacity: .3 }, { transform: 'none', opacity: 1 }], { duration: 300, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    tile.remove();
+  }
+}
+function drag(w){
+  const bar = w.querySelector('.bar');
+  bar.addEventListener('dblclick', e => { if (!e.target.closest('button')) w.classList.toggle('max'); });
+  bar.addEventListener('pointerdown', e => {
+    if (e.target.closest('button') || w.classList.contains('max') || innerWidth <= 760) return;
+    const sx = e.clientX - w.offsetLeft, sy = e.clientY - w.offsetTop;
+    bar.setPointerCapture(e.pointerId);
+    const mv = ev => { w.style.left = Math.min(innerWidth - 80, Math.max(-w.offsetWidth + 120, ev.clientX - sx)) + 'px'; w.style.top = Math.min(innerHeight - 90, Math.max(0, ev.clientY - sy)) + 'px'; };
+    const up = () => { bar.removeEventListener('pointermove', mv); bar.removeEventListener('pointerup', up); };
+    bar.addEventListener('pointermove', mv); bar.addEventListener('pointerup', up);
+  });
+}
+function wireOpeners(root){
+  root.querySelectorAll('[data-open]').forEach(el => {
+    if (el.classList.contains('dicon')) {
+      el.onclick = () => { if (el.dataset.justDragged) return; document.querySelectorAll('.dicon').forEach(d => d.classList.toggle('sel', d === el)); go(el); };
+      el.onkeydown = e => { if (e.key === 'Enter') go(el); };
+    } else el.onclick = () => { const w = el.closest('.widget'); if (w && w.dataset.justDragged) return; go(el); };
+  });
+}
+let jokeN = 0;
+function go(el){
+  const id = el.dataset.open, folder = el.dataset.folder !== undefined ? el.dataset.folder : undefined;
+  const o = { folder, note: el.dataset.note };
+  if (id === 'info') o.key = folder;
+  if (id === 'alert') { o.joke = el.dataset.joke; o.key = el.dataset.joke + (++jokeN); }
+  openApp(id, o);
+}
+let vList = [], vIdx = 0;
+function showWork(){
+  const w = WORK[vList[vIdx]];
+  document.getElementById('vMedia').innerHTML = w.video ? `<video src="${esc(w.video)}" controls autoplay playsinline poster="${esc(w.img)}"></video>` : `<img src="${esc(w.img)}" alt="${esc(w.title)}">`;
+  document.getElementById('vCap').textContent = `${w.title} · ${FOLDERS[w.cat]}, ${KINDS[w.cat].toLowerCase()} · ${vIdx + 1} of ${vList.length}`;
+}
+function stepWork(d){ if (!vList.length) return; vIdx = (vIdx + d + vList.length) % vList.length; showWork(); }
+function wireWork(root){
+  const tiles = [...root.querySelectorAll('[data-work]')];
+  tiles.forEach((t, i) => t.onclick = () => {
+    const w = WORK[+t.dataset.work];
+    if (w.link && !w.video) { window.open(w.link, '_blank', 'noopener'); return; }
+    vList = tiles.map(x => +x.dataset.work); vIdx = i; showWork();
+    document.getElementById('viewer').classList.add('show');
+  });
+}
+
+
+/* ---------- drag anything on the desktop, remember where it was left ---------- */
+const POS_KEY = 'sahit-desk-v1';
+let dragZ = 10, POS = {}; try { POS = JSON.parse(localStorage.getItem(POS_KEY) || '{}'); } catch(e){}
+function savePos(){ try { localStorage.setItem(POS_KEY, JSON.stringify(POS)); } catch(e){} }
+function clampEl(el, x, y){
+  const top = el.closest('.desk') ? 0 : 30;
+  return [Math.max(0, Math.min(innerWidth - el.offsetWidth, x)), Math.max(top, Math.min(innerHeight - 60, y))];
+}
+function restore(el, key){
+  const p = POS[key]; if (!p || innerWidth <= 760) return false;
+  const [x, y] = clampEl(el, p.x * innerWidth, p.y * innerHeight);
+  el.style.left = x + 'px'; el.style.top = y + 'px'; return true;
+}
+function makeDraggable(el, key){
+  restore(el, key);
+  el.addEventListener('pointerdown', e => {
+    if (innerWidth <= 760 || e.button > 0) return;
+    if (el.classList.contains('widget') && e.target.closest('button, a')) return;
+    const sx = e.clientX, sy = e.clientY, ox = el.offsetLeft, oy = el.offsetTop; let moved = false;
+    const mv = ev => {
+      const dx = ev.clientX - sx, dy = ev.clientY - sy;
+      if (!moved && Math.hypot(dx, dy) < 5) return;
+      if (!moved) { moved = true; el.classList.add('dragging'); el.style.zIndex = ++dragZ; }
+      const [x, y] = clampEl(el, ox + dx, oy + dy);
+      el.style.left = x + 'px'; el.style.top = y + 'px';
+    };
+    const up = () => {
+      removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+      if (!moved) return;
+      el.classList.remove('dragging');
+      el.dataset.justDragged = 1; setTimeout(() => delete el.dataset.justDragged, 50);
+      POS[key] = { x: el.offsetLeft / innerWidth, y: el.offsetTop / innerHeight }; savePos();
+    };
+    addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  });
+}
+makeDraggable(document.getElementById('wProfile'), 'widget:profile');
+makeDraggable(document.getElementById('wClock'), 'widget:clock');
+addEventListener('resize', () => { restore(document.getElementById('wProfile'), 'widget:profile'); restore(document.getElementById('wClock'), 'widget:clock'); });
+
+/* ---------- boot screen (once per session) ---------- */
+(function(){
+  let seen = false; try { seen = sessionStorage.getItem('booted'); sessionStorage.setItem('booted', 1); } catch(e){}
+  if (seen || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const b = document.getElementById('boot'); b.classList.add('show');
+  setTimeout(() => { b.classList.add('out'); setTimeout(() => b.classList.remove('show','out'), 380); }, 1150);
+})();
+
+/* ---------- notification toast (once per session) ---------- */
+(function(){
+  const t = document.getElementById('toast'); fillSvg(t);
+  let seen = false; try { seen = sessionStorage.getItem('toasted'); sessionStorage.setItem('toasted', 1); } catch(e){}
+  if (seen) return;
+  setTimeout(() => t.classList.add('show'), 2600);
+  const hide = () => t.classList.remove('show');
+  setTimeout(hide, 9000);
+  t.onclick = () => { hide(); openApp('mail'); };
+})();
+
+/* ---------- Calendly ---------- */
+function book(){
+  if (CONFIG.calendly) { window.open(CONFIG.calendly, '_blank', 'noopener'); return; }
+  openApp('alert', { joke: 'book', key: 'book' + (++jokeN) });
+}
+JOKES.book = { app: 'Calendly', icon: 'img/calendly.png', text: 'Booking a call is opening soon. Send a quick brief for now and I will reply with a time that works for you.', btn: 'Send a brief', mail: true };
+document.querySelectorAll('[data-book]').forEach(b => b.addEventListener('click', book));
+
+/* ---------- Spotlight (Cmd/Ctrl + K) ---------- */
+const spot = document.getElementById('spot'), spotQ = document.getElementById('spotQ'), spotList = document.getElementById('spotList');
+let spotItems = [], spotSel = 0;
+function spotIndex(){
+  const I = [];
+  const app = (n, img, sub, act) => I.push({ g: 'Apps', n, img, sub, act });
+  app('Photos', 'img/photos.png', 'All work', () => openApp('photos'));
+  app('Work', 'img/finder.png', 'Finder', () => openApp('finder'));
+  app('Notes', 'img/notes.png', 'About, CV, Interests', () => openApp('notes'));
+  app('Mail', 'img/mail.png', 'Send a brief', () => openApp('mail'));
+  app('System Settings', 'img/settings.png', 'Theme, wallpaper', () => openApp('settings'));
+  app('Book a call', 'img/calendly.png', 'Calendly', book);
+  app('Instagram', 'img/instagram.png', 'Opens in a new tab', () => window.open(CONFIG.instagram, '_blank', 'noopener'));
+  app('LinkedIn', 'img/linkedin.png', 'Opens in a new tab', () => window.open(CONFIG.linkedin, '_blank', 'noopener'));
+  Object.keys(FOLDERS).forEach(k => I.push({ g: 'Projects', n: FOLDERS[k], img: WORK.find(w => w.cat === k).img, thumb: 1, sub: KINDS[k], act: () => openApp('info', { folder: k, key: k }) }));
+  Object.entries(NOTES).forEach(([k, n]) => I.push({ g: 'Notes', n: n.t, img: 'img/notes.png', sub: n.s, act: () => openApp('notes', { note: k }) }));
+  WORK.forEach((w, i) => I.push({ g: 'Creatives', n: w.title, img: w.img, thumb: 1, sub: FOLDERS[w.cat], act: () => { vList = WORK.map((_, j) => j); vIdx = i; showWork(); document.getElementById('viewer').classList.add('show'); } }));
+  I.push({ g: 'Actions', n: 'Dark mode', img: 'img/settings.png', sub: 'Appearance', act: () => { document.documentElement.dataset.mode = 'dark'; try{localStorage.setItem('mode','dark')}catch(e){} } });
+  I.push({ g: 'Actions', n: 'Light mode', img: 'img/settings.png', sub: 'Appearance', act: () => { document.documentElement.dataset.mode = 'light'; try{localStorage.setItem('mode','light')}catch(e){} } });
+  I.push({ g: 'Actions', n: 'Privacy Policy', img: 'img/settings.png', sub: 'Legal', act: () => openApp('privacy') });
+  I.push({ g: 'Actions', n: 'Terms', img: 'img/settings.png', sub: 'Legal', act: () => openApp('terms') });
+  return I;
+}
+function spotRender(){
+  const q = spotQ.value.trim().toLowerCase();
+  const all = spotIndex();
+  spotItems = q ? all.filter(x => (x.n + ' ' + x.sub + ' ' + x.g).toLowerCase().includes(q)).slice(0, 14) : all.filter(x => x.g === 'Apps' || x.g === 'Projects');
+  spotSel = 0; let g = '';
+  spotList.innerHTML = spotItems.map((x, i) => (x.g !== g ? (g = x.g, `<h5>${esc(x.g)}</h5>`) : '') + `<button class="sr ${i === 0 ? 'on' : ''}" data-i="${i}" role="option"><img src="${esc(x.img)}" alt="" ${x.thumb ? 'class="thumb"' : ''}><span>${esc(x.n)}</span><small>${esc(x.sub)}</small></button>`).join('') || '<h5>No results</h5>';
+  spotList.querySelectorAll('.sr').forEach(b => { b.onclick = () => spotGo(+b.dataset.i); b.onmousemove = () => spotMark(+b.dataset.i); });
+}
+function spotMark(i){ spotSel = i; spotList.querySelectorAll('.sr').forEach(b => b.classList.toggle('on', +b.dataset.i === i)); const on = spotList.querySelector('.sr.on'); on && on.scrollIntoView({ block: 'nearest' }); }
+function spotGo(i){ const x = spotItems[i]; spotClose(); x && x.act(); }
+function spotOpen(){ spot.classList.add('show'); spotQ.value = ''; spotRender(); spotQ.focus(); }
+function spotClose(){ spot.classList.remove('show'); }
+spotQ.addEventListener('input', spotRender);
+spotQ.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); spotMark(Math.min(spotItems.length - 1, spotSel + 1)); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); spotMark(Math.max(0, spotSel - 1)); }
+  else if (e.key === 'Enter') { e.preventDefault(); spotGo(spotSel); }
+  else if (e.key === 'Escape') { e.stopPropagation(); spotClose(); }
+});
+spot.addEventListener('click', e => { if (e.target === spot) spotClose(); });
+document.getElementById('mbSearch').onclick = spotOpen;
+addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); spot.classList.contains('show') ? spotClose() : spotOpen(); } });
+
+/* ---------- right-click menu on the desktop ---------- */
+(function(){
+  const ctx = document.getElementById('ctx');
+  const items = [
+    ['New Brief...', () => openApp('mail'), ''],
+    ['Search...', spotOpen, '⌘K'],
+    '-',
+    ['Change Wallpaper...', () => openApp('settings'), ''],
+    ['Arrange Icons', () => { Object.keys(POS).forEach(k => k.startsWith('icon:') && delete POS[k]); savePos(); document.querySelectorAll('.dicon').forEach(d => delete d.dataset.moved); dispatchEvent(new Event('resize')); }, ''],
+    ['Use Dark Mode', () => { const d = document.documentElement.dataset.mode === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.mode = d; try{localStorage.setItem('mode', d)}catch(e){} }, ''],
+    '-',
+    ['About sa.hit', () => openApp('about'), '']
+  ];
+  const close = () => ctx.classList.remove('show');
+  addEventListener('contextmenu', e => {
+    if (innerWidth <= 760 || e.target.closest('.win, .dock, .widget, .menubar, input, textarea, a, .spot')) return;
+    e.preventDefault();
+    ctx.innerHTML = items.map((it, i) => it === '-' ? '<hr>' : `<button role="menuitem" data-c="${i}"><span>${it[0] === 'Use Dark Mode' && document.documentElement.dataset.mode === 'dark' ? 'Use Light Mode' : it[0]}</span><kbd>${it[2]}</kbd></button>`).join('');
+    ctx.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { close(); items[+b.dataset.c][1](); });
+    ctx.classList.add('show');
+    const w = ctx.offsetWidth, h = ctx.offsetHeight;
+    ctx.style.left = Math.min(e.clientX, innerWidth - w - 6) + 'px'; ctx.style.top = Math.min(e.clientY, innerHeight - h - 6) + 'px';
+    ctx.querySelector('button').focus();
+  });
+  addEventListener('pointerdown', e => { if (!e.target.closest('.ctx')) close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  addEventListener('blur', close);
+})();
+
+/* ---------- wallpaper glass: clear spot follows the mouse ---------- */
+(function(){
+  const wall = document.querySelector('.wall'); let raf = 0, x = 0, y = 0;
+  addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    x = e.clientX; y = e.clientY; wall.classList.add('peek');
+    if (!raf) raf = requestAnimationFrame(() => { raf = 0; wall.style.setProperty('--mx', x + 'px'); wall.style.setProperty('--my', y + 'px'); });
+  });
+  document.documentElement.addEventListener('pointerleave', () => wall.classList.remove('peek'));
+  addEventListener('blur', () => wall.classList.remove('peek'));
+})();
+
+/* ---------- phone: featured work widget ---------- */
+(function(){
+  const picks = ['samesame','fly','beep','kaanch'].map(k => WORK.findIndex(w => w.cat === k)).filter(i => i >= 0);
+  document.getElementById('featRow').innerHTML = picks.map(i => `<button aria-label="${esc(WORK[i].title)}" data-feat="${i}" style="background-image:url('${esc(WORK[i].img)}')"></button>`).join('');
+  document.querySelectorAll('[data-feat]').forEach(b => b.onclick = () => { vList = WORK.map((_,i) => i); vIdx = +b.dataset.feat; showWork(); document.getElementById('viewer').classList.add('show'); });
+})();
+
+/* ---------- desktop: scattered project stacks ---------- */
+(function(){
+  const desk = document.getElementById('desk');
+  const SPOTS = { samesame:[0.27,0.40,-4], fly:[0.69,0.12,5], beep:[0.80,0.47,-6], runo:[0.33,0.70,6], wear:[0.72,0.68,-3], bright:[0.10,0.58,4], kaanch:[0.90,0.15,-5], cv:[0.43,0.10,0] };
+  const html = Object.keys(FOLDERS).map(k => {
+    const imgs = WORK.filter(w => w.cat === k).slice(0, 3).reverse();
+    const r = SPOTS[k][2];
+    return `<button class="dicon" data-open="info" data-folder="${k}" data-spot="${k}"><span class="stack">${imgs.map((w,i) => `<img draggable="false" src="${esc(w.img)}" alt="" style="--r:${(i - imgs.length + 1) * 7 + r}deg">`).join('')}</span><span>${esc(FOLDERS[k])}</span><small>${esc(KINDS[k])}</small></button>`;
+  }).join('') + `<button class="dicon" data-open="notes" data-note="cv" data-spot="cv"><span class="ic" data-svg="doc"></span><span>Sahit_CV.pdf</span></button>`;
+  desk.innerHTML = html; fillSvg(desk);
+  function rnd(seed){ return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
+  function place(){
+    if (innerWidth <= 760) return;
+    const W = innerWidth, H = innerHeight, IW = 124, IH = 150, PAD = 14;
+    const blocks = ['#wProfile','#wClock'].map(q => document.querySelector(q).getBoundingClientRect())
+      .map(r => ({ l: r.left - PAD, t: r.top - 30 - PAD, r: r.right + PAD, b: r.bottom - 30 + PAD }));
+    const dock = document.querySelector('.dock').getBoundingClientRect();
+    blocks.push({ l: dock.left - 40, t: dock.top - 30 - 70, r: dock.right + 40, b: H });
+    blocks.push({ l: W / 2 - 120, t: H * 0.16, r: W / 2 + 120, b: H * 0.5 });          /* keep the face clear */
+    const hit = (a, b) => a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t;
+    const r = rnd(1000 + Math.round(W / 40) * 7 + Math.round(H / 40));
+    const placed = [];
+    desk.querySelectorAll('[data-spot]').forEach(el => {
+      if (restore(el, 'icon:' + el.dataset.spot)) return;
+      let best = null;
+      for (let i = 0; i < 600 && !best; i++) {
+        const x = 8 + r() * (W - IW - 16), y = 8 + r() * (H - 30 - IH - 16);
+        const box = { l: x, t: y, r: x + IW, b: y + IH };
+        if (blocks.some(b => hit(box, b)) || placed.some(b => hit(box, { l: b.l - 18, t: b.t - 10, r: b.r + 18, b: b.b + 10 }))) continue;
+        best = box;
+      }
+      if (!best) { const n = placed.length; best = { l: W - IW - 12 - Math.floor(n / 4) * (IW + 8), t: 10 + (n % 4) * (IH + 6) }; best.r = best.l + IW; best.b = best.t + IH; }
+      placed.push(best); el.style.left = best.l + 'px'; el.style.top = best.t + 'px';
+    });
+  }
+  requestAnimationFrame(place); addEventListener('resize', place);
+  desk.querySelectorAll('.dicon').forEach(el => makeDraggable(el, 'icon:' + el.dataset.spot));
+})();
+wireOpeners(document);
+document.querySelector('.wall').addEventListener('click', () => document.querySelectorAll('.dicon').forEach(d => d.classList.remove('sel')));
+
+/* viewer + dialog */
+const viewer = document.getElementById('viewer');
+const closeViewer = () => { viewer.classList.remove('show'); document.getElementById('vMedia').innerHTML = ''; };
+document.getElementById('vClose').onclick = closeViewer;
+document.getElementById('vPrev').onclick = () => stepWork(-1);
+document.getElementById('vNext').onclick = () => stepWork(1);
+viewer.addEventListener('click', e => { if (e.target === viewer) closeViewer(); });
+function dialog(t, p){ document.getElementById('dlgT').textContent = t; document.getElementById('dlgP').textContent = p; const d = document.getElementById('dialog'); d.classList.add('show'); document.getElementById('dlgOk').focus(); }
+document.getElementById('dlgOk').onclick = () => document.getElementById('dialog').classList.remove('show');
+addEventListener('keydown', e => {
+  if (spot.classList.contains('show')) return;
+  if (viewer.classList.contains('show') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return stepWork(e.key === 'ArrowLeft' ? -1 : 1);
+  if (e.key !== 'Escape') return;
+  if (viewer.classList.contains('show')) return closeViewer();
+  const d = document.getElementById('dialog'); if (d.classList.contains('show')) return d.classList.remove('show');
+  const top = Object.values(open).filter(w => !w.classList.contains('min')).sort((a,b) => b.style.zIndex - a.style.zIndex)[0];
+  if (top && top.classList.contains('dlg')) { top.querySelector('[data-close]').click(); return; }
+  top && top.querySelector('.c').click();
+});
+
+
+/* ---------- Dock: magnification + resize (macOS style) ---------- */
+(function(){
+  const dock = document.querySelector('.dock');
+  const imgsQ = () => [...dock.querySelectorAll('.item img')];
+  const root = document.documentElement;
+  const RANGE = 170;
+  let base = 56;
+  try { const v = +localStorage.getItem('dockSize'); if (v >= 36 && v <= 84) base = v; } catch(e){}
+  const apply = () => root.style.setProperty('--ds', base + 'px');
+  apply();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let raf = 0, mx = null, resizing = false;
+  function frame(){
+    raf = 0;
+    if (mx === null || resizing || innerWidth <= 760) return;
+    const max = Math.min(128, Math.round(base * 1.8));
+    const imgs = imgsQ();
+    const c = imgs.map(i => { const r = i.parentElement.getBoundingClientRect(); return r.left + r.width / 2; });
+    imgs.forEach((img, i) => {
+      if (!img.offsetParent) return;
+      const d = Math.abs(mx - c[i]);
+      const t = d >= RANGE ? 0 : Math.cos((d / RANGE) * Math.PI / 2);
+      img.style.width = img.style.height = Math.round(base + (max - base) * t * t) + 'px';
+    });
+  }
+  const reset = () => imgsQ().forEach(i => i.style.width = i.style.height = '');
+  if (!reduce) {
+    dock.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse' || e.target.closest('.sep')) { if (e.target.closest('.sep')) { mx = null; reset(); } return; } mx = e.clientX; dock.classList.add('mag'); if (!raf) raf = requestAnimationFrame(frame); });
+    dock.addEventListener('pointerleave', () => { mx = null; dock.classList.remove('mag'); reset(); });
+  }
+  dock.querySelectorAll('.sep').forEach(sep => sep.addEventListener('pointerdown', e => {
+    e.preventDefault(); sep.setPointerCapture(e.pointerId);
+    resizing = true; dock.classList.add('resizing'); reset();
+    const y0 = e.clientY, b0 = base;
+    const mv = ev => { base = Math.max(36, Math.min(84, Math.round(b0 + (y0 - ev.clientY) * 0.7))); apply(); };
+    const up = () => { resizing = false; dock.classList.remove('resizing'); sep.removeEventListener('pointermove', mv); sep.removeEventListener('pointerup', up); try{localStorage.setItem('dockSize', base)}catch(e){} };
+    sep.addEventListener('pointermove', mv); sep.addEventListener('pointerup', up);
+  }));
+  dock.querySelectorAll('.item[data-app]').forEach(b => b.addEventListener('click', () => {
+    if (reduce || innerWidth <= 760 || b.classList.contains('on')) return;
+    b.classList.remove('bounce'); void b.offsetWidth; b.classList.add('bounce');
+    setTimeout(() => b.classList.remove('bounce'), 1000);
+  }, true));
+})();
+
+/* first visit: open About on desktop */
+
+</script>
+</body>
+</html>
